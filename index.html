@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="theme-color"
+        content="#075b9c"
+    >
+
+    <meta
+        name="description"
+        content="Calculadora y grilla salarial AMET Regional 1 CABA – agosto 2026"
+    >
+
+    <title>Grilla Salarial AMET | Regional 1 CABA</title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header>
+
+        <div class="head">
+
+            <div class="logo">
+                AMET
+            </div>
+
+            <div>
+                <b>AMET · REGIONAL 1</b>
+
+                <small>
+                    Asociación del Magisterio de Enseñanza Técnica · CABA
+                </small>
+            </div>
+
+        </div>
+
+
+        <nav>
+            <a href="#calculadora">
+                Calculadora
+            </a>
+
+            <a href="#comparador">
+                Comparador
+            </a>
+
+            <a href="#grilla">
+                Grilla completa
+            </a>
+
+            <a href="#referencias">
+                Referencias
+            </a>
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             PORTADA / HERO
+        ================================================== -->
+
+        <section class="hero">
+
+            <div>
+
+                <span class="tag">
+                    GRILLA VIGENTE · AGOSTO 2026
+                </span>
+
+                <h1>
+                    Tu salario,<br>
+                    <em>más claro.</em>
+                </h1>
+
+                <p>
+                    Calculadora interactiva basada en la grilla salarial
+                    de AMET Regional 1. Consultá cargos, horas cátedra
+                    y antigüedad desde cualquier dispositivo.
+                </p>
+
+
+                <div class="actions">
+
+                    <a
+                        class="btn"
+                        href="#calculadora"
+                    >
+                        Calcular ahora
+                    </a>
+
+                    <a
+                        class="ghost"
+                        href="#grilla"
+                    >
+                        Ver grilla completa →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESUMEN DE LA GRILLA -->
+
+            <div class="summary">
+
+                <small>
+                    VALOR ÍNDICE
+                </small>
+
+                <strong>
+                    $ 291,09
+                </strong>
+
+
+                <hr>
+
+
+                <small>
+                    VIGENCIA
+                </small>
+
+                <b>
+                    Desde agosto de 2026
+                </b>
+
+
+                <hr>
+
+
+                <small>
+                    ÁMBITO
+                </small>
+
+                <b>
+                    Ciudad Autónoma de Buenos Aires
+                </b>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             01 - CALCULADORA SALARIAL
+        ================================================== -->
+
+        <section
+            id="calculadora"
+            class="card"
+        >
+
+            <div class="title">
+
+                <span>
+                    01
+                </span>
+
+                <div>
+
+                    <h2>
+                        Mi liquidación estimada
+                    </h2>
+
+                    <p>
+                        Agregá uno o varios cargos.
+                        Podés repetir el mismo cargo —por ejemplo,
+                        dos TC— y asignar una antigüedad diferente
+                        a cada uno.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ESTADO INICIAL -->
+
+            <div
+                id="emptyState"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <h3>
+                    Todavía no agregaste cargos
+                </h3>
+
+                <p>
+                    No se muestra ningún cargo por defecto.
+                    Comenzá agregando el primero y elegí
+                    cargo y antigüedad.
+                </p>
+
+                <button
+                    class="btn button"
+                    id="firstAdd"
+                >
+                    Agregar mi primer cargo
+                </button>
+
+            </div>
+
+
+            <!--
+                Los cargos seleccionados se agregan
+                dinámicamente desde app.js
+            -->
+
+            <div id="items"></div>
+
+
+            <!-- AGREGAR OTRO CARGO -->
+
+            <div
+                id="addArea"
+                class="add-area hidden"
+            >
+
+                <button
+                    class="add-btn"
+                    id="addItem"
+                >
+                    ＋ Agregar otro cargo
+                </button>
+
+                <span>
+                    Podés repetir cargos tantas veces como necesites.
+                </span>
+
+            </div>
+
+
+            <!-- TOTAL DE LA LIQUIDACIÓN -->
+
+            <div
+                id="grand"
+                class="grand hidden"
+            >
+
+                <div>
+
+                    <small>
+                        TOTAL DE BOLSILLO DE REFERENCIA
+                    </small>
+
+                    <strong id="grandTotal">
+                        $ 0
+                    </strong>
+
+                    <p id="grandDesc"></p>
+
+                </div>
+
+
+                <div class="grand-actions">
+
+                    <button id="clearAll">
+                        Limpiar liquidación
+                    </button>
+
+                    <button onclick="window.print()">
+                        Imprimir / guardar PDF
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADVERTENCIA -->
+
+            <div class="notice">
+
+                ⓘ Cada renglón utiliza el valor de bolsillo publicado
+                para ese cargo y antigüedad.
+
+                La suma es una referencia aritmética; la liquidación
+                real puede variar por topes, acumulación, situación
+                de revista, impuestos u otros conceptos.
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             02 - COMPARADOR DE ANTIGÜEDAD
+        ================================================== -->
+
+        <section
+            id="comparador"
+            class="card"
+        >
+
+            <div class="title">
+
+                <span>
+                    02
+                </span>
+
+                <div>
+
+                    <h2>
+                        Comparador de antigüedad
+                    </h2>
+
+                    <p>
+                        El gráfico muestra el último cargo seleccionado
+                        y su evolución por antigüedad.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                El gráfico se genera desde app.js
+            -->
+
+            <div
+                id="bars"
+                class="bars"
+            ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             03 - GRILLA SALARIAL COMPLETA
+        ================================================== -->
+
+        <section
+            id="grilla"
+            class="card"
+        >
+
+            <div class="title">
+
+                <span>
+                    03
+                </span>
+
+                <div>
+
+                    <h2>
+                        Grilla salarial completa
+                    </h2>
+
+                    <p>
+                        Todos los cargos y valores transcritos
+                        de la grilla de agosto de 2026.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- HERRAMIENTAS -->
+
+            <div class="tools">
+
+                <input
+                    id="search"
+                    type="search"
+                    placeholder="Buscar: rector, preceptor, MEP, hora cátedra…"
+                >
+
+                <button id="csv">
+                    Descargar CSV
+                </button>
+
+                <button onclick="window.print()">
+                    Imprimir / PDF
+                </button>
+
+            </div>
+
+
+            <!-- TABLA -->
+
+            <div class="table">
+
+                <table>
+
+                    <thead id="thead">
+                    </thead>
+
+                    <tbody id="tbody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             04 / 05 / 06 - REFERENCIAS
+        ================================================== -->
+
+        <section
+            id="referencias"
+            class="refs"
+        >
+
+
+            <!-- DESCUENTOS -->
+
+            <article>
+
+                <span>
+                    04
+                </span>
+
+                <h3>
+                    Descuentos informados
+                </h3>
+
+                <p>
+                    <b>Obra social:</b> 3%
+                    <br>
+
+                    <b>Caja complementaria:</b> 4,5%
+                    <br>
+
+                    <b>Jubilación:</b> 11%
+                    <br>
+
+                    <b>Ap. jub. docente:</b> 2%
+                </p>
+
+            </article>
+
+
+            <!-- GARANTÍAS -->
+
+            <article>
+
+                <span>
+                    05
+                </span>
+
+                <h3>
+                    Garantías mínimas
+                </h3>
+
+                <p>
+                    La grilla original informa garantías mínimas
+                    y topes diferenciados según cargo.
+
+                    Para no generar resultados engañosos,
+                    esta herramienta usa como cálculo principal
+                    los valores finales publicados.
+                </p>
+
+            </article>
+
+
+            <!-- FUENTE -->
+
+            <article>
+
+                <span>
+                    06
+                </span>
+
+                <h3>
+                    Fuente institucional
+                </h3>
+
+                <p>
+                    AMET Regional 1 · Personería Gremial 1461
+                    <br>
+
+                    Av. Rivadavia 3846, 1.º piso · CABA
+                    <br>
+
+                    Información de contacto verificada
+                    en documentación institucional.
+                </p>
+
+                <a
+                    href="https://www.ametregional1.org.ar/"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Sitio oficial →
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             INFORMACIÓN DE LA HERRAMIENTA
+        ================================================== -->
+
+        <section class="method">
+
+            <h2>
+                Acerca de esta herramienta
+            </h2>
+
+            <p>
+                Versión web preparada a partir de la grilla
+                “Incremento salarial a partir del mes de agosto de 2026”.
+
+                Los importes se muestran como referencia informativa.
+
+                Ante diferencias, prevalecen la grilla oficial,
+                la normativa aplicable y la liquidación correspondiente.
+            </p>
+
+            <p class="updated">
+                Última actualización de esta versión:
+                septiembre de 2026.
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         PIE DE PÁGINA
+    ====================================================== -->
+
+    <footer>
+
+        <div>
+
+            <b>
+                AMET · Regional 1
+            </b>
+
+            <small>
+                Herramienta de consulta salarial · CABA
+            </small>
+
+        </div>
+
+
+        <div>
+            Agosto 2026
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <!-- Datos de la grilla salarial -->
+    <script src="data.js"></script>
+
+    <!-- Funcionamiento de la calculadora -->
+    <script src="app.js"></script>
+
+
+</body>
+
+</html>
