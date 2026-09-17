@@ -16,23 +16,18 @@
 
 :root {
 
-    /* Color principal */
     --b: #075b9c;
 
-    /* Color principal oscuro */
     --b2: #063e6b;
 
-    /* Texto principal */
     --ink: #132332;
 
-    /* Texto secundario */
     --muted: #667887;
 
-    /* Bordes */
     --line: #d9e3ea;
 
-    /* Fondo general */
     --bg: #f3f6f8;
+
 }
 
 
@@ -42,9 +37,11 @@ html {
 
 
 body {
+
     margin: 0;
 
     background: var(--bg);
+
     color: var(--ink);
 
     font-family:
@@ -54,6 +51,26 @@ body {
         Segoe UI,
         Arial,
         sans-serif;
+
+}
+
+
+button,
+input,
+select {
+
+    font: inherit;
+
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+.hidden {
+    display: none !important;
 }
 
 
@@ -62,90 +79,122 @@ body {
    ============================================================ */
 
 header {
+
     height: 86px;
 
     background: #fff;
 
-    border-bottom: 1px solid var(--line);
+    border-bottom:
+        1px
+        solid
+        var(--line);
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 0 5vw;
+    padding:
+        0
+        5vw;
 
     position: sticky;
+
     top: 0;
 
     z-index: 20;
+
 }
 
 
-/* ------------------------------------------------------------
-   Identidad / logo
-   ------------------------------------------------------------ */
-
 .head {
+
     display: flex;
+
     align-items: center;
+
     gap: 12px;
+
 }
 
 
 .head div:nth-child(2) {
+
     display: flex;
+
     flex-direction: column;
+
 }
 
 
 .head small {
+
     color: var(--muted);
+
     margin-top: 2px;
+
 }
 
 
 .logo {
+
     width: 50px;
+
     height: 50px;
 
-    border: 3px solid var(--b);
+    border:
+        3px
+        solid
+        var(--b);
+
     border-radius: 50%;
 
     display: grid;
+
     place-items: center;
 
     color: var(--b);
 
     font-size: 12px;
+
     font-weight: 900;
+
 }
 
 
-/* ------------------------------------------------------------
-   Navegación
-   ------------------------------------------------------------ */
+/* ============================================================
+   03. NAVEGACIÓN
+   ============================================================ */
 
 nav {
+
     display: flex;
+
     gap: 22px;
+
 }
 
 
 nav a {
+
     text-decoration: none;
 
     color: var(--ink);
 
     font-size: 13px;
+
     font-weight: 800;
+
 }
 
 
 /* ============================================================
-   03. CONTENIDO PRINCIPAL
+   04. CONTENIDO PRINCIPAL
    ============================================================ */
 
 main {
+
     max-width: 1240px;
 
     margin: auto;
@@ -154,14 +203,16 @@ main {
         0
         24px
         70px;
+
 }
 
 
 /* ============================================================
-   04. HERO / PORTADA
+   05. PORTADA
    ============================================================ */
 
 .hero {
+
     min-height: 480px;
 
     display: grid;
@@ -173,33 +224,31 @@ main {
     align-items: center;
 
     gap: 80px;
+
 }
 
 
-/* ------------------------------------------------------------
-   Etiqueta superior
-   ------------------------------------------------------------ */
-
 .tag {
+
     font-size: 12px;
+
     font-weight: 900;
 
     letter-spacing: 0.12em;
 
     color: var(--b);
+
 }
 
 
-/* ------------------------------------------------------------
-   Título principal
-   ------------------------------------------------------------ */
-
 h1 {
-    font-size: clamp(
-        50px,
-        7vw,
-        82px
-    );
+
+    font-size:
+        clamp(
+            50px,
+            7vw,
+            82px
+        );
 
     line-height: 0.94;
 
@@ -209,35 +258,34 @@ h1 {
         15px
         0
         24px;
+
 }
 
 
 h1 em {
+
     font-style: normal;
 
     color: var(--b);
+
 }
 
 
-/* ------------------------------------------------------------
-   Descripción
-   ------------------------------------------------------------ */
-
 .hero p {
+
     max-width: 680px;
 
     font-size: 19px;
+
     line-height: 1.55;
 
     color: var(--muted);
+
 }
 
 
-/* ------------------------------------------------------------
-   Botones principales
-   ------------------------------------------------------------ */
-
 .actions {
+
     display: flex;
 
     gap: 22px;
@@ -245,11 +293,16 @@ h1 em {
     align-items: center;
 
     margin-top: 28px;
+
 }
 
 
 .btn {
+
+    border: 0;
+
     background: var(--b);
+
     color: #fff;
 
     padding:
@@ -261,24 +314,29 @@ h1 em {
     text-decoration: none;
 
     font-weight: 850;
+
 }
 
 
 .ghost {
+
     color: var(--b);
 
     font-weight: 800;
 
     text-decoration: none;
+
 }
 
 
 /* ============================================================
-   05. RESUMEN DE LA GRILLA
+   06. RESUMEN
    ============================================================ */
 
 .summary {
+
     background: var(--b2);
+
     color: #fff;
 
     border-radius: 18px;
@@ -290,22 +348,27 @@ h1 em {
         20px
         55px
         #063e6b26;
+
 }
 
 
 .summary small {
+
     display: block;
 
     color: #a9c8df;
 
     font-weight: 800;
+
     font-size: 11px;
 
     letter-spacing: 0.08em;
+
 }
 
 
 .summary strong {
+
     display: block;
 
     font-size: 38px;
@@ -313,17 +376,30 @@ h1 em {
     margin:
         6px
         0;
+
 }
 
 
 .summary b {
+
     display: block;
 
     margin-top: 6px;
+
+}
+
+
+.summary span {
+
+    color: #d4e4ef;
+
+    line-height: 1.45;
+
 }
 
 
 .summary hr {
+
     border: 0;
 
     border-top:
@@ -334,14 +410,16 @@ h1 em {
     margin:
         22px
         0;
+
 }
 
 
 /* ============================================================
-   06. TARJETAS GENERALES
+   07. TARJETAS
    ============================================================ */
 
 .card {
+
     background: #fff;
 
     border:
@@ -362,19 +440,22 @@ h1 em {
         8px
         30px
         #0d29400a;
+
 }
 
 
 /* ============================================================
-   07. TÍTULOS DE SECCIÓN
+   08. TÍTULOS
    ============================================================ */
 
 .title {
+
     display: flex;
 
     gap: 16px;
 
     margin-bottom: 26px;
+
 }
 
 
@@ -384,53 +465,51 @@ h1 em {
     color: var(--b);
 
     font-weight: 900;
+
     font-size: 12px;
 
     padding-top: 7px;
+
 }
 
 
 .title h2 {
+
     margin:
         0
         0
         5px;
 
     font-size: 29px;
+
 }
 
 
 .title p {
+
     margin: 0;
 
     color: var(--muted);
+
 }
 
 
 /* ============================================================
-   08. FORMULARIOS
+   09. FORMULARIOS
    ============================================================ */
 
-.grid {
-    display: grid;
-
-    grid-template-columns:
-        2fr
-        1fr
-        1fr;
-
-    gap: 17px;
-}
-
-
 label {
+
     font-size: 13px;
+
     font-weight: 850;
+
 }
 
 
 select,
 input {
+
     width: 100%;
 
     padding: 13px;
@@ -446,11 +525,10 @@ input {
 
     background: #fff;
 
-    font: inherit;
-
     color: var(--ink);
 
     outline: none;
+
 }
 
 
@@ -465,10 +543,22 @@ input:focus {
         0
         3px
         #075b9c16;
+
+}
+
+
+select:disabled,
+input:disabled {
+
+    background: #f2f5f7;
+
+    cursor: not-allowed;
+
 }
 
 
 label small {
+
     display: block;
 
     font-weight: 400;
@@ -476,437 +566,16 @@ label small {
     color: var(--muted);
 
     margin-top: 6px;
+
 }
 
 
 /* ============================================================
-   09. RESULTADO SALARIAL GENERAL
+   10. ESTADO VACÍO
    ============================================================ */
-
-.salary {
-    margin-top: 28px;
-
-    background: #102c43;
-    color: #fff;
-
-    border-radius: 14px;
-
-    padding: 29px;
-
-    display: grid;
-
-    grid-template-columns:
-        1.1fr
-        1fr;
-
-    gap: 35px;
-}
-
-
-.salary small {
-    color: #9eb6c8;
-
-    font-size: 11px;
-    font-weight: 800;
-
-    letter-spacing: 0.06em;
-}
-
-
-.salary strong {
-    font-size: clamp(
-        38px,
-        5vw,
-        58px
-    );
-
-    display: block;
-
-    letter-spacing: -0.04em;
-
-    margin:
-        5px
-        0;
-}
-
-
-.salary p {
-    color: #b7c9d5;
-}
-
-
-/* ============================================================
-   10. DATOS / FACTS
-   ============================================================ */
-
-.facts {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 12px;
-}
-
-
-.facts div {
-    background: #ffffff0b;
-
-    border:
-        1px
-        solid
-        #ffffff12;
-
-    border-radius: 8px;
-
-    padding: 12px;
-}
-
-
-.facts b {
-    display: block;
-
-    margin-top: 5px;
-}
-
-
-/* ============================================================
-   11. AVISOS
-   ============================================================ */
-
-.notice {
-    font-size: 12px;
-
-    color: var(--muted);
-
-    background: #f2f6f8;
-
-    border-radius: 8px;
-
-    padding: 13px;
-
-    margin-top: 13px;
-}
-
-
-/* ============================================================
-   12. COMPARADOR / GRÁFICO
-   ============================================================ */
-
-.bars {
-    display: flex;
-
-    gap: 10px;
-
-    align-items: end;
-
-    height: 270px;
-
-    padding-top: 20px;
-
-    overflow-x: auto;
-}
-
-
-.bar {
-    min-width: 72px;
-
-    flex: 1;
-
-    text-align: center;
-}
-
-
-.bar i {
-    display: block;
-
-    background: var(--b);
-
-    border-radius:
-        5px
-        5px
-        0
-        0;
-
-    min-height: 3px;
-}
-
-
-.bar b {
-    display: block;
-
-    font-size: 10px;
-
-    margin-top: 7px;
-}
-
-
-.bar small {
-    color: var(--muted);
-
-    font-size: 10px;
-}
-
-
-/* ============================================================
-   13. HERRAMIENTAS DE LA GRILLA
-   ============================================================ */
-
-.tools {
-    display: flex;
-
-    gap: 9px;
-
-    flex-wrap: wrap;
-
-    margin-bottom: 15px;
-}
-
-
-.tools input {
-    max-width: 520px;
-
-    margin: 0;
-}
-
-
-.tools button {
-    border:
-        1px
-        solid
-        #c8d5de;
-
-    background: #fff;
-
-    border-radius: 8px;
-
-    padding:
-        0
-        14px;
-
-    font-weight: 750;
-
-    cursor: pointer;
-}
-
-
-/* ============================================================
-   14. TABLA SALARIAL
-   ============================================================ */
-
-.table {
-    overflow: auto;
-
-    border:
-        1px
-        solid
-        var(--line);
-
-    border-radius: 9px;
-}
-
-
-table {
-    border-collapse: collapse;
-
-    width: 100%;
-
-    font-size: 12px;
-
-    white-space: nowrap;
-}
-
-
-/* ------------------------------------------------------------
-   Encabezado
-   ------------------------------------------------------------ */
-
-th {
-    background: #eaf2f7;
-
-    color: #31536c;
-
-    padding: 11px;
-
-    text-align: right;
-
-    position: sticky;
-
-    top: 0;
-}
-
-
-/* ------------------------------------------------------------
-   Primera columna fija
-   ------------------------------------------------------------ */
-
-th:first-child,
-td:first-child {
-
-    text-align: left;
-
-    position: sticky;
-
-    left: 0;
-
-    z-index: 2;
-}
-
-
-/* ------------------------------------------------------------
-   Celdas
-   ------------------------------------------------------------ */
-
-td {
-    padding:
-        10px
-        11px;
-
-    border-top:
-        1px
-        solid
-        #edf1f4;
-
-    text-align: right;
-
-    background: #fff;
-}
-
-
-/* Filas alternadas */
-
-tbody tr:nth-child(even) td {
-    background: #fafcfd;
-}
-
-
-/* Hover */
-
-tbody tr:hover td {
-    background: #eef6fb;
-}
-
-
-/* ============================================================
-   15. REFERENCIAS
-   ============================================================ */
-
-.refs {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 18px;
-}
-
-
-.refs article {
-    background: #fff;
-
-    border:
-        1px
-        solid
-        var(--line);
-
-    border-radius: 14px;
-
-    padding: 24px;
-}
-
-
-.refs h3 {
-    margin:
-        8px
-        0;
-}
-
-
-.refs p,
-.method p {
-
-    color: var(--muted);
-
-    line-height: 1.55;
-}
-
-
-.refs a {
-    color: var(--b);
-
-    font-weight: 800;
-
-    text-decoration: none;
-}
-
-
-/* ============================================================
-   16. ACERCA DE LA HERRAMIENTA
-   ============================================================ */
-
-.method {
-    padding:
-        45px
-        10px
-        15px;
-
-    max-width: 850px;
-}
-
-
-.method h2 {
-    font-size: 30px;
-}
-
-
-.updated {
-    font-size: 13px;
-}
-
-
-/* ============================================================
-   17. PIE DE PÁGINA
-   ============================================================ */
-
-footer {
-    background: #0d2639;
-
-    color: #fff;
-
-    padding:
-        30px
-        5vw;
-
-    display: flex;
-
-    justify-content: space-between;
-}
-
-
-footer div:first-child {
-    display: flex;
-
-    flex-direction: column;
-}
-
-
-footer small {
-    color: #9db3c3;
-
-    margin-top: 4px;
-}
-
-
-/* ============================================================
-   18. CALCULADORA MULTICARGO
-   ============================================================ */
-
-
-/* ------------------------------------------------------------
-   Estado inicial vacío
-   ------------------------------------------------------------ */
 
 .empty-state {
+
     text-align: center;
 
     border:
@@ -921,20 +590,24 @@ footer small {
         20px;
 
     background: #f9fbfc;
+
 }
 
 
 .empty-state h3 {
+
     font-size: 23px;
 
     margin:
         10px
         0
         5px;
+
 }
 
 
 .empty-state p {
+
     color: var(--muted);
 
     max-width: 580px;
@@ -943,13 +616,16 @@ footer small {
         0
         auto
         22px;
+
 }
 
 
 .empty-icon {
+
     margin: auto;
 
     width: 54px;
+
     height: 54px;
 
     border-radius: 50%;
@@ -963,36 +639,21 @@ footer small {
     place-items: center;
 
     font-size: 31px;
+
 }
 
-
-/* ------------------------------------------------------------
-   Botones
-   ------------------------------------------------------------ */
 
 .button {
-    border: 0;
-
     cursor: pointer;
-
-    font: inherit;
-}
-
-
-/* ------------------------------------------------------------
-   Elementos ocultos
-   ------------------------------------------------------------ */
-
-.hidden {
-    display: none !important;
 }
 
 
 /* ============================================================
-   19. CARGO INDIVIDUAL
+   11. CARGOS
    ============================================================ */
 
 .line-item {
+
     border:
         1px
         solid
@@ -1003,14 +664,12 @@ footer small {
     margin-bottom: 15px;
 
     overflow: hidden;
+
 }
 
 
-/* ------------------------------------------------------------
-   Cabecera del cargo
-   ------------------------------------------------------------ */
-
 .line-head {
+
     display: flex;
 
     justify-content: space-between;
@@ -1027,40 +686,32 @@ footer small {
         1px
         solid
         var(--line);
+
 }
 
 
-/* ------------------------------------------------------------
-   Botón eliminar
-   ------------------------------------------------------------ */
-
 .remove {
+
     border: 0;
 
     background: transparent;
 
     color: #a22;
 
-    cursor: pointer;
-
     font-weight: 800;
+
 }
 
-
-/* ------------------------------------------------------------
-   Cuerpo del cargo
-   ------------------------------------------------------------ */
 
 .line-body {
+
     padding: 18px;
+
 }
 
 
-/* ------------------------------------------------------------
-   Selectores del cargo
-   ------------------------------------------------------------ */
-
 .line-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -1069,14 +720,16 @@ footer small {
         1fr;
 
     gap: 14px;
+
 }
 
 
 /* ============================================================
-   20. RESULTADO DE CADA CARGO
+   12. RESULTADO INDIVIDUAL
    ============================================================ */
 
 .line-result {
+
     margin-top: 15px;
 
     padding:
@@ -1096,35 +749,43 @@ footer small {
     justify-content: space-between;
 
     gap: 20px;
+
 }
 
 
 .line-result small {
+
     color: #9fb7c8;
 
     display: block;
+
 }
 
 
 .line-result strong {
+
     font-size: 26px;
+
 }
 
 
 .line-meta {
+
     font-size: 11px;
 
     color: #a9bfce;
 
     text-align: right;
+
 }
 
 
 /* ============================================================
-   21. AGREGAR OTRO CARGO
+   13. AGREGAR CARGO
    ============================================================ */
 
 .add-area {
+
     display: flex;
 
     gap: 14px;
@@ -1134,17 +795,21 @@ footer small {
     margin:
         18px
         0;
+
 }
 
 
 .add-area span {
+
     font-size: 12px;
 
     color: var(--muted);
+
 }
 
 
 .add-btn {
+
     border:
         1px
         solid
@@ -1162,15 +827,15 @@ footer small {
 
     font-weight: 850;
 
-    cursor: pointer;
 }
 
 
 /* ============================================================
-   22. TOTAL DE LA LIQUIDACIÓN
+   14. SUMA SIMPLE DE CARGOS
    ============================================================ */
 
 .grand {
+
     background: var(--b);
 
     color: #fff;
@@ -1188,19 +853,23 @@ footer small {
     align-items: center;
 
     gap: 25px;
+
 }
 
 
 .grand small {
+
     color: #b6d1e4;
 
     font-weight: 800;
 
     font-size: 11px;
+
 }
 
 
 .grand strong {
+
     display: block;
 
     font-size: 48px;
@@ -1208,30 +877,32 @@ footer small {
     margin:
         4px
         0;
+
 }
 
 
 .grand p {
+
     margin: 0;
 
     color: #c6dbe9;
+
 }
 
 
-/* ------------------------------------------------------------
-   Acciones del total
-   ------------------------------------------------------------ */
-
 .grand-actions {
+
     display: flex;
 
     gap: 8px;
 
     flex-wrap: wrap;
+
 }
 
 
 .grand-actions button {
+
     border:
         1px
         solid
@@ -1247,132 +918,1041 @@ footer small {
         10px
         12px;
 
-    cursor: pointer;
-
     font-weight: 750;
+
 }
 
 
 /* ============================================================
-   23. DISEÑO RESPONSIVE
+   15. LIQUIDACIÓN CONSOLIDADA
+   ============================================================ */
+
+.settlement {
+
+    margin-top: 18px;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    background: #fff;
+
+}
+
+
+/* ============================================================
+   ENCABEZADO LIQUIDACIÓN
+   ============================================================ */
+
+.settlement-head {
+
+    padding:
+        24px
+        26px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    background: #f4f8fa;
+
+    border-bottom:
+        1px
+        solid
+        var(--line);
+
+}
+
+
+.settlement-head small {
+
+    color: var(--b);
+
+    font-weight: 900;
+
+    font-size: 11px;
+
+    letter-spacing: 0.08em;
+
+}
+
+
+.settlement-head h3 {
+
+    margin:
+        5px
+        0
+        0;
+
+    font-size: 22px;
+
+}
+
+
+.settlement-head > strong {
+
+    font-size:
+        clamp(
+            30px,
+            4vw,
+            42px
+        );
+
+    color: var(--b2);
+
+    letter-spacing: -0.03em;
+
+    white-space: nowrap;
+
+}
+
+
+/* ============================================================
+   MÉTRICAS
+   ============================================================ */
+
+.settlement-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 12px;
+
+    padding:
+        20px
+        24px
+        0;
+
+}
+
+
+.metric {
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 9px;
+
+    padding: 15px;
+
+    background: #fbfcfd;
+
+}
+
+
+.metric small {
+
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    font-weight: 850;
+
+    letter-spacing: 0.06em;
+
+}
+
+
+.metric b {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 21px;
+
+}
+
+
+/* ============================================================
+   DETALLE DE TRAMOS
+   ============================================================ */
+
+.band-breakdown {
+
+    padding:
+        18px
+        24px
+        0;
+
+}
+
+
+.band-row {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1.25fr
+        1fr;
+
+    gap: 15px;
+
+    align-items: center;
+
+    padding:
+        12px
+        0;
+
+    border-bottom:
+        1px
+        solid
+        #edf1f4;
+
+    font-size: 13px;
+
+}
+
+
+.band-row:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.band-row span {
+
+    color: var(--muted);
+
+}
+
+
+.band-row b {
+
+    font-weight: 750;
+
+}
+
+
+.band-row strong {
+
+    text-align: right;
+
+    font-size: 15px;
+
+}
+
+
+/* ============================================================
+   ESTADO DEL CÁLCULO
+   ============================================================ */
+
+.bands-status {
+
+    margin:
+        16px
+        24px
+        0;
+
+    color: var(--muted);
+
+    line-height: 1.5;
+
+    font-size: 12px;
+
+}
+
+
+.settlement-note {
+
+    margin-top: 18px;
+
+    padding:
+        16px
+        24px;
+
+    background: #f4f7f9;
+
+    border-top:
+        1px
+        solid
+        var(--line);
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.55;
+
+}
+
+
+.settlement-note b {
+
+    color: var(--ink);
+
+}
+
+
+/* ============================================================
+   16. COMPARACIÓN CUENTA SUELDO
+   ============================================================ */
+
+.bank-comparison {
+
+    margin-top: 18px;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    background: #fff;
+
+}
+
+
+/* ============================================================
+   TOTAL ESPERADO
+   ============================================================ */
+
+.bank-total {
+
+    padding: 27px;
+
+    background: #102c43;
+
+    color: #fff;
+
+}
+
+
+.bank-total small {
+
+    display: block;
+
+    color: #9fb7c8;
+
+    font-size: 11px;
+
+    font-weight: 850;
+
+    letter-spacing: 0.08em;
+
+}
+
+
+.bank-total strong {
+
+    display: block;
+
+    margin:
+        6px
+        0;
+
+    font-size:
+        clamp(
+            38px,
+            5vw,
+            54px
+        );
+
+    letter-spacing: -0.04em;
+
+}
+
+
+.bank-total p {
+
+    margin: 0;
+
+    color: #b7c9d5;
+
+    font-size: 13px;
+
+}
+
+
+/* ============================================================
+   MONTO ACREDITADO
+   ============================================================ */
+
+.bank-check {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 25px;
+
+    padding: 25px;
+
+}
+
+
+.bank-check input {
+
+    font-size: 20px;
+
+    font-weight: 750;
+
+}
+
+
+/* ============================================================
+   DIFERENCIA
+   ============================================================ */
+
+.bank-difference {
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+}
+
+
+.bank-difference small {
+
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    font-weight: 850;
+
+    letter-spacing: 0.07em;
+
+}
+
+
+.bank-difference strong {
+
+    display: block;
+
+    margin:
+        5px
+        0;
+
+    font-size: 28px;
+
+}
+
+
+.bank-difference p {
+
+    margin:
+        4px
+        0
+        0;
+
+    font-size: 12px;
+
+    color: var(--muted);
+
+}
+
+
+/* Coincidencia */
+
+.difference-ok {
+
+    border-color: #65956e;
+
+    background: #f7fbf7;
+
+}
+
+
+/* Recibió más */
+
+.difference-positive {
+
+    border-color: #4f7fa2;
+
+    background: #f7fbfd;
+
+}
+
+
+/* Recibió menos */
+
+.difference-negative {
+
+    border-color: #b46b6b;
+
+    background: #fff9f9;
+
+}
+
+
+/* ============================================================
+   ACLARACIÓN BANCARIA
+   ============================================================ */
+
+.bank-warning {
+
+    padding:
+        14px
+        25px;
+
+    background: #f4f7f9;
+
+    border-top:
+        1px
+        solid
+        var(--line);
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+
+/* ============================================================
+   17. COMPARADOR
+   ============================================================ */
+
+.bars {
+
+    display: flex;
+
+    gap: 10px;
+
+    align-items: end;
+
+    height: 270px;
+
+    padding-top: 20px;
+
+    overflow-x: auto;
+
+}
+
+
+.bars-empty {
+
+    color: var(--muted);
+
+    padding:
+        60px
+        0;
+
+}
+
+
+.bar {
+
+    min-width: 72px;
+
+    flex: 1;
+
+    text-align: center;
+
+}
+
+
+.bar i {
+
+    display: block;
+
+    background: var(--b);
+
+    border-radius:
+        5px
+        5px
+        0
+        0;
+
+    min-height: 3px;
+
+}
+
+
+.bar b {
+
+    display: block;
+
+    font-size: 10px;
+
+    margin-top: 7px;
+
+}
+
+
+.bar small {
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+}
+
+
+/* ============================================================
+   18. HERRAMIENTAS
+   ============================================================ */
+
+.tools {
+
+    display: flex;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 15px;
+
+}
+
+
+.tools input {
+
+    max-width: 520px;
+
+    margin: 0;
+
+}
+
+
+.tools button {
+
+    border:
+        1px
+        solid
+        #c8d5de;
+
+    background: #fff;
+
+    border-radius: 8px;
+
+    padding:
+        0
+        14px;
+
+    font-weight: 750;
+
+}
+
+
+/* ============================================================
+   19. TABLA SALARIAL
+   ============================================================ */
+
+.table {
+
+    overflow: auto;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 9px;
+
+}
+
+
+table {
+
+    border-collapse: collapse;
+
+    width: 100%;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+}
+
+
+th {
+
+    background: #eaf2f7;
+
+    color: #31536c;
+
+    padding: 11px;
+
+    text-align: right;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1;
+
+}
+
+
+th:first-child,
+td:first-child {
+
+    text-align: left;
+
+    position: sticky;
+
+    left: 0;
+
+    z-index: 2;
+
+}
+
+
+th:first-child {
+
+    z-index: 3;
+
+}
+
+
+td {
+
+    padding:
+        10px
+        11px;
+
+    border-top:
+        1px
+        solid
+        #edf1f4;
+
+    text-align: right;
+
+    background: #fff;
+
+}
+
+
+tbody tr:nth-child(even) td {
+
+    background: #fafcfd;
+
+}
+
+
+tbody tr:hover td {
+
+    background: #eef6fb;
+
+}
+
+
+/* ============================================================
+   20. REFERENCIAS
+   ============================================================ */
+
+.refs {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 18px;
+
+    margin-top: 28px;
+
+}
+
+
+.refs article {
+
+    background: #fff;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 14px;
+
+    padding: 24px;
+
+}
+
+
+.refs h3 {
+
+    margin:
+        8px
+        0;
+
+}
+
+
+.refs p,
+.method p {
+
+    color: var(--muted);
+
+    line-height: 1.55;
+
+}
+
+
+.refs a {
+
+    color: var(--b);
+
+    font-weight: 800;
+
+    text-decoration: none;
+
+}
+
+
+.source-links {
+
+    display: flex;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    margin-top: 12px;
+
+}
+
+
+.source-links a {
+
+    font-size: 12px;
+
+}
+
+
+/* ============================================================
+   21. METODOLOGÍA
+   ============================================================ */
+
+.method {
+
+    padding:
+        45px
+        10px
+        15px;
+
+    max-width: 900px;
+
+}
+
+
+.method h2 {
+
+    font-size: 30px;
+
+}
+
+
+.updated {
+
+    font-size: 13px;
+
+}
+
+
+/* ============================================================
+   22. PIE DE PÁGINA
+   ============================================================ */
+
+footer {
+
+    background: #0d2639;
+
+    color: #fff;
+
+    padding:
+        30px
+        5vw;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+}
+
+
+footer div:first-child {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+footer small {
+
+    color: #9db3c3;
+
+    margin-top: 4px;
+
+}
+
+
+/* ============================================================
+   23. RESPONSIVE
    ============================================================ */
 
 @media (max-width: 850px) {
 
-    /* --------------------------------------------------------
-       Header
-       -------------------------------------------------------- */
 
     header {
+
         height: 72px;
+
     }
 
 
     nav {
+
         display: none;
+
     }
 
 
     .head small {
+
         display: none;
+
     }
 
 
-    /* --------------------------------------------------------
-       Hero
-       -------------------------------------------------------- */
-
     .hero {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
 
         gap: 0;
 
         padding:
             55px
             0;
+
     }
 
 
     .summary {
+
         margin-top: 30px;
+
     }
 
 
     h1 {
+
         font-size: 55px;
+
     }
 
-
-    /* --------------------------------------------------------
-       Grillas
-       -------------------------------------------------------- */
-
-    .grid,
-    .salary,
-    .refs {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .facts {
-        grid-template-columns:
-            1fr
-            1fr;
-    }
-
-
-    /* --------------------------------------------------------
-       Tarjetas
-       -------------------------------------------------------- */
 
     .card {
+
         padding: 21px;
+
     }
 
 
-    /* --------------------------------------------------------
-       Botones hero
-       -------------------------------------------------------- */
-
-    .actions {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-
-    /* --------------------------------------------------------
-       Gráfico
-       -------------------------------------------------------- */
-
-    .bars {
-        height: 230px;
-    }
-
-
-    /* --------------------------------------------------------
-       Calculadora multicargo
-       -------------------------------------------------------- */
-
-    .line-grid {
-        grid-template-columns: 1fr;
-    }
-
-
+    .actions,
     .line-result,
     .grand,
-    .add-area {
+    .add-area,
+    .settlement-head,
+    footer {
 
         align-items: flex-start;
 
         flex-direction: column;
+
+    }
+
+
+    .line-grid,
+    .settlement-grid,
+    .bank-check,
+    .refs {
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
     .line-meta {
+
         text-align: left;
+
     }
+
+
+    .settlement-head > strong {
+
+        white-space: normal;
+
+    }
+
+
+    .band-row {
+
+        grid-template-columns:
+            1fr;
+
+        gap: 4px;
+
+    }
+
+
+    .band-row strong {
+
+        text-align: left;
+
+    }
+
+
+    .bars {
+
+        height: 230px;
+
+    }
+
+
+    .tools button {
+
+        min-height: 44px;
+
+    }
+
 }
 
 
@@ -1382,54 +1962,66 @@ footer small {
 
 @media print {
 
-    /* Elementos que no deben imprimirse */
 
     header,
     .hero,
     .tools,
     #comparador,
-    .notice,
+    .remove,
+    .add-area,
+    .grand-actions,
+    .bank-check,
     footer {
 
         display: none !important;
+
     }
 
-
-    /* Fondo */
 
     body {
+
         background: #fff;
+
     }
 
 
-    /* Tarjetas */
+    .card,
+    .refs article {
+
+        box-shadow: none;
+
+    }
+
 
     .card {
-        box-shadow: none;
 
         border: 0;
 
         padding: 0;
+
     }
 
 
-    /* Tabla */
-
     .table {
+
         overflow: visible;
+
     }
 
 
     table {
+
         font-size: 8px;
+
     }
 
 
-    /* Contenido */
-
     main {
+
         max-width: none;
 
         padding: 0;
+
     }
+
 }

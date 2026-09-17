@@ -1,38 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <meta charset="utf-8">
+
+    <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        name="theme-color"
-        content="#075b9c"
-    >
+    <title>
+        AMET Regional 1 · Calculadora Salarial · Agosto 2026
+    </title>
 
     <meta
         name="description"
-        content="Calculadora y grilla salarial AMET Regional 1 CABA – agosto 2026"
+        content="Calculadora y grilla salarial de referencia para AMET Regional 1 CABA, agosto de 2026."
     >
-
-    <title>Grilla Salarial AMET | Regional 1 CABA</title>
 
     <link
         rel="stylesheet"
         href="styles.css"
     >
+
 </head>
 
 
 <body>
 
+
     <!-- =====================================================
          ENCABEZADO
-    ====================================================== -->
+         ===================================================== -->
 
     <header>
 
@@ -43,17 +43,22 @@
             </div>
 
             <div>
-                <b>AMET · REGIONAL 1</b>
+
+                <b>
+                    AMET Regional 1
+                </b>
 
                 <small>
-                    Asociación del Magisterio de Enseñanza Técnica · CABA
+                    Ciudad Autónoma de Buenos Aires
                 </small>
+
             </div>
 
         </div>
 
 
         <nav>
+
             <a href="#calculadora">
                 Calculadora
             </a>
@@ -63,45 +68,57 @@
             </a>
 
             <a href="#grilla">
-                Grilla completa
+                Grilla
             </a>
 
             <a href="#referencias">
                 Referencias
             </a>
+
         </nav>
 
     </header>
 
 
-    <!-- =====================================================
-         CONTENIDO PRINCIPAL
-    ====================================================== -->
 
     <main>
 
 
         <!-- =================================================
-             PORTADA / HERO
-        ================================================== -->
+             PORTADA
+             ================================================= -->
 
         <section class="hero">
 
+
             <div>
 
-                <span class="tag">
-                    GRILLA VIGENTE · AGOSTO 2026
-                </span>
+                <div class="tag">
+                    AMET REGIONAL 1 · CABA · AGOSTO 2026
+                </div>
+
 
                 <h1>
-                    Tu salario,<br>
-                    <em>más claro.</em>
+
+                    Calculadora<br>
+
+                    <em>
+                        salarial docente
+                    </em>
+
                 </h1>
 
+
                 <p>
-                    Calculadora interactiva basada en la grilla salarial
-                    de AMET Regional 1. Consultá cargos, horas cátedra
-                    y antigüedad desde cualquier dispositivo.
+
+                    Consultá la grilla, combiná más de un cargo
+                    y obtené una estimación del total a cobrar.
+
+                    Para cargos expresados en horas cátedra,
+                    la herramienta consolida la carga horaria
+                    y aplica los valores diferenciados
+                    publicados en la grilla.
+
                 </p>
 
 
@@ -111,8 +128,9 @@
                         class="btn"
                         href="#calculadora"
                     >
-                        Calcular ahora
+                        Calcular mi sueldo
                     </a>
+
 
                     <a
                         class="ghost"
@@ -126,9 +144,8 @@
             </div>
 
 
-            <!-- RESUMEN DE LA GRILLA -->
 
-            <div class="summary">
+            <aside class="summary">
 
                 <small>
                     VALOR ÍNDICE
@@ -139,15 +156,24 @@
                 </strong>
 
 
+                <b>
+                    Agosto 2026
+                </b>
+
+                <span>
+                    CABA
+                </span>
+
+
                 <hr>
 
 
                 <small>
-                    VIGENCIA
+                    TRAMOS HORARIOS USADOS
                 </small>
 
                 <b>
-                    Desde agosto de 2026
+                    1–30 · 31–40 · más de 40 HC
                 </b>
 
 
@@ -155,26 +181,31 @@
 
 
                 <small>
-                    ÁMBITO
+                    IMPORTANTE
                 </small>
 
-                <b>
-                    Ciudad Autónoma de Buenos Aires
-                </b>
+                <span>
 
-            </div>
+                    La herramienta es orientativa
+                    y no reemplaza la liquidación oficial.
+
+                </span>
+
+            </aside>
 
         </section>
 
 
+
         <!-- =================================================
-             01 - CALCULADORA SALARIAL
-        ================================================== -->
+             CALCULADORA MULTICARGO
+             ================================================= -->
 
         <section
             id="calculadora"
             class="card"
         >
+
 
             <div class="title">
 
@@ -182,17 +213,18 @@
                     01
                 </span>
 
+
                 <div>
 
                     <h2>
-                        Mi liquidación estimada
+                        Calculadora multicargo
                     </h2>
 
                     <p>
-                        Agregá uno o varios cargos.
-                        Podés repetir el mismo cargo —por ejemplo,
-                        dos TC— y asignar una antigüedad diferente
-                        a cada uno.
+
+                        Podés agregar el mismo cargo más de una vez
+                        y combinar cargos con horas cátedra.
+
                     </p>
 
                 </div>
@@ -200,7 +232,10 @@
             </div>
 
 
-            <!-- ESTADO INICIAL -->
+
+            <!-- =============================================
+                 ESTADO INICIAL
+                 ============================================= -->
 
             <div
                 id="emptyState"
@@ -211,19 +246,26 @@
                     +
                 </div>
 
+
                 <h3>
-                    Todavía no agregaste cargos
+                    Empezá agregando un cargo
                 </h3>
 
+
                 <p>
-                    No se muestra ningún cargo por defecto.
-                    Comenzá agregando el primero y elegí
-                    cargo y antigüedad.
+
+                    La calculadora comienza vacía para evitar
+                    resultados preseleccionados.
+
+                    Podés agregar todos los cargos que necesites.
+
                 </p>
 
+
                 <button
-                    class="btn button"
                     id="firstAdd"
+                    class="btn button"
+                    type="button"
                 >
                     Agregar mi primer cargo
                 </button>
@@ -231,15 +273,18 @@
             </div>
 
 
-            <!--
-                Los cargos seleccionados se agregan
-                dinámicamente desde app.js
-            -->
+
+            <!-- =============================================
+                 CARGOS
+                 ============================================= -->
 
             <div id="items"></div>
 
 
-            <!-- AGREGAR OTRO CARGO -->
+
+            <!-- =============================================
+                 AGREGAR OTRO CARGO
+                 ============================================= -->
 
             <div
                 id="addArea"
@@ -247,80 +292,301 @@
             >
 
                 <button
-                    class="add-btn"
                     id="addItem"
+                    class="add-btn"
+                    type="button"
                 >
-                    ＋ Agregar otro cargo
+                    + Agregar otro cargo
                 </button>
 
+
                 <span>
-                    Podés repetir cargos tantas veces como necesites.
+
+                    Podés repetir un cargo,
+                    por ejemplo dos TC de 36 horas.
+
                 </span>
 
             </div>
 
 
-            <!-- TOTAL DE LA LIQUIDACIÓN -->
+
+            <!-- =============================================
+                 SUMA SIMPLE SEGÚN GRILLA
+                 ============================================= -->
 
             <div
                 id="grand"
                 class="grand hidden"
             >
 
+
                 <div>
 
                     <small>
-                        TOTAL DE BOLSILLO DE REFERENCIA
+                        SUMA INDIVIDUAL SEGÚN GRILLA
                     </small>
 
+
                     <strong id="grandTotal">
-                        $ 0
+                        $ 0,00
                     </strong>
+
 
                     <p id="grandDesc"></p>
 
                 </div>
 
 
+
                 <div class="grand-actions">
 
-                    <button id="clearAll">
-                        Limpiar liquidación
+                    <button
+                        id="clearAll"
+                        type="button"
+                    >
+                        Limpiar
                     </button>
 
-                    <button onclick="window.print()">
-                        Imprimir / guardar PDF
+
+                    <button
+                        type="button"
+                        onclick="window.print()"
+                    >
+                        Imprimir / Guardar PDF
                     </button>
 
                 </div>
 
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TOTAL ESTIMADO CON TOPES
+                 ================================================= -->
+
+            <div
+                id="settlement"
+                class="settlement hidden"
+            >
+
+
+                <div class="settlement-head">
+
+
+                    <div>
+
+                        <small>
+                            ESTIMACIÓN CONSOLIDADA
+                        </small>
+
+                        <h3>
+                            Total estimado con tramos horarios
+                        </h3>
+
+                    </div>
+
+
+                    <strong id="estimatedTotal">
+                        $ 0,00
+                    </strong>
+
+                </div>
+
+
+
+                <div class="settlement-grid">
+
+
+                    <div class="metric">
+
+                        <small>
+                            CARGA HORARIA COMPUTADA
+                        </small>
+
+                        <b id="totalHours">
+                            —
+                        </b>
+
+                    </div>
+
+
+
+                    <div class="metric">
+
+                        <small>
+                            AJUSTE FRENTE A SUMA SIMPLE
+                        </small>
+
+                        <b id="adjustmentTotal">
+                            $ 0,00
+                        </b>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div
+                    id="bandBreakdown"
+                    class="band-breakdown"
+                ></div>
+
+
+
+                <p
+                    id="bandsStatus"
+                    class="bands-status"
+                ></p>
+
+
+
+                <div class="settlement-note">
+
+                    <b>
+                        Cómo se calcula:
+                    </b>
+
+                    para los cargos que pueden expresarse
+                    directamente en horas cátedra,
+                    se consolidan las horas de la persona.
+
+                    Las primeras 30 se valorizan con la fila
+                    “HS CÁTEDRA”, las horas 31 a 40 con
+                    “HS CÁTEDRA &gt;30” y las superiores a 40
+                    con “HS CÁTEDRA &gt;40”.
+
+                    Los cargos que no tienen una equivalencia
+                    horaria explícita se suman según el valor
+                    publicado en la grilla.
+
+                </div>
+
+
             </div>
 
 
-            <!-- ADVERTENCIA -->
 
-            <div class="notice">
+            <!-- =================================================
+                 COMPARACIÓN CON CUENTA SUELDO
+                 ================================================= -->
 
-                ⓘ Cada renglón utiliza el valor de bolsillo publicado
-                para ese cargo y antigüedad.
+            <div
+                id="bankComparison"
+                class="bank-comparison hidden"
+            >
 
-                La suma es una referencia aritmética; la liquidación
-                real puede variar por topes, acumulación, situación
-                de revista, impuestos u otros conceptos.
+
+                <div class="bank-total">
+
+                    <small>
+                        TOTAL ESTIMADO A RECIBIR EN CUENTA SUELDO
+                    </small>
+
+
+                    <strong id="bankExpected">
+                        $ 0,00
+                    </strong>
+
+
+                    <p>
+
+                        Este es el valor de referencia
+                        que conviene comparar con la acreditación real.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="bank-check">
+
+
+                    <label for="bankAmount">
+
+                        ¿Cuánto recibiste realmente en tu cuenta?
+
+
+                        <input
+                            id="bankAmount"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Ingresar monto acreditado"
+                        >
+
+
+                        <small>
+
+                            Campo opcional.
+
+                            No se guarda ni se envía
+                            a ningún servidor.
+
+                        </small>
+
+                    </label>
+
+
+
+                    <div
+                        id="bankDifferenceBox"
+                        class="bank-difference hidden"
+                    >
+
+                        <small>
+                            DIFERENCIA
+                        </small>
+
+
+                        <strong id="bankDifference">
+                            $ 0,00
+                        </strong>
+
+
+                        <p id="bankStatus"></p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="bank-warning">
+
+                    El importe acreditado puede diferir por
+                    descuentos personales, afiliación sindical,
+                    embargos, préstamos, inasistencias,
+                    presentismo, asignaciones,
+                    impuesto a los ingresos u otros conceptos
+                    que no están incluidos en esta grilla.
+
+                </div>
+
 
             </div>
+
 
         </section>
 
 
+
         <!-- =================================================
-             02 - COMPARADOR DE ANTIGÜEDAD
-        ================================================== -->
+             COMPARADOR
+             ================================================= -->
 
         <section
             id="comparador"
             class="card"
         >
+
 
             <div class="title">
 
@@ -328,15 +594,19 @@
                     02
                 </span>
 
+
                 <div>
 
                     <h2>
-                        Comparador de antigüedad
+                        Comparación por antigüedad
                     </h2>
 
                     <p>
-                        El gráfico muestra el último cargo seleccionado
-                        y su evolución por antigüedad.
+
+                        Al seleccionar un cargo en la calculadora
+                        se muestra su evolución de bolsillo
+                        según antigüedad.
+
                     </p>
 
                 </div>
@@ -344,32 +614,32 @@
             </div>
 
 
-            <!--
-                El gráfico se genera desde app.js
-            -->
-
             <div
                 id="bars"
                 class="bars"
             ></div>
 
+
         </section>
 
 
+
         <!-- =================================================
-             03 - GRILLA SALARIAL COMPLETA
-        ================================================== -->
+             GRILLA COMPLETA
+             ================================================= -->
 
         <section
             id="grilla"
             class="card"
         >
 
+
             <div class="title">
 
                 <span>
                     03
                 </span>
+
 
                 <div>
 
@@ -378,8 +648,10 @@
                     </h2>
 
                     <p>
-                        Todos los cargos y valores transcritos
+
+                        Valores cargados a partir
                         de la grilla de agosto de 2026.
+
                     </p>
 
                 </div>
@@ -387,49 +659,57 @@
             </div>
 
 
-            <!-- HERRAMIENTAS -->
 
             <div class="tools">
+
 
                 <input
                     id="search"
                     type="search"
-                    placeholder="Buscar: rector, preceptor, MEP, hora cátedra…"
+                    placeholder="Buscar por cargo o código..."
                 >
 
-                <button id="csv">
+
+                <button
+                    id="csv"
+                    type="button"
+                >
                     Descargar CSV
                 </button>
 
-                <button onclick="window.print()">
+
+                <button
+                    type="button"
+                    onclick="window.print()"
+                >
                     Imprimir / PDF
                 </button>
+
 
             </div>
 
 
-            <!-- TABLA -->
 
             <div class="table">
 
                 <table>
 
-                    <thead id="thead">
-                    </thead>
+                    <thead id="thead"></thead>
 
-                    <tbody id="tbody">
-                    </tbody>
+                    <tbody id="tbody"></tbody>
 
                 </table>
 
             </div>
 
+
         </section>
 
 
+
         <!-- =================================================
-             04 / 05 / 06 - REFERENCIAS
-        ================================================== -->
+             REFERENCIAS
+             ================================================= -->
 
         <section
             id="referencias"
@@ -437,7 +717,89 @@
         >
 
 
-            <!-- DESCUENTOS -->
+            <article>
+
+                <span>
+                    01
+                </span>
+
+                <h3>
+                    Descuentos de referencia
+                </h3>
+
+
+                <p>
+
+                    Obra social: 3 %<br>
+
+                    Caja complementaria: 4,5 %<br>
+
+                    Jubilación: 11 %<br>
+
+                    Aporte jubilatorio suplementario docente: 2 %
+
+                </p>
+
+            </article>
+
+
+
+            <article>
+
+                <span>
+                    02
+                </span>
+
+                <h3>
+                    Garantías de la grilla
+                </h3>
+
+
+                <p>
+
+                    MEP: $ 1.039.716<br>
+
+                    Preceptor: $ 872.079<br>
+
+                    MAEP: $ 945.363<br>
+
+                    Hora cátedra: $ 51.986<br>
+
+                    Tope informado: $ 2.079.432
+
+                </p>
+
+            </article>
+
+
+
+            <article>
+
+                <span>
+                    03
+                </span>
+
+                <h3>
+                    Topes horarios
+                </h3>
+
+
+                <p>
+
+                    La normativa salarial contiene conceptos
+                    con topes por persona en 30, 38 y 40
+                    horas cátedra.
+
+                    La calculadora utiliza las tres filas
+                    marginales publicadas en la grilla AMET
+                    para estimar el efecto acumulado
+                    de las horas.
+
+                </p>
+
+            </article>
+
+
 
             <article>
 
@@ -446,109 +808,107 @@
                 </span>
 
                 <h3>
-                    Descuentos informados
+                    Fuentes
                 </h3>
 
+
                 <p>
-                    <b>Obra social:</b> 3%
+
+                    Grilla salarial AMET Regional 1 CABA
+                    · Agosto 2026.
+
                     <br>
 
-                    <b>Caja complementaria:</b> 4,5%
-                    <br>
+                    Acta Salarial 02/2026 del GCBA y referencias
+                    salariales docentes publicadas
+                    para junio/agosto de 2026.
 
-                    <b>Jubilación:</b> 11%
-                    <br>
-
-                    <b>Ap. jub. docente:</b> 2%
                 </p>
+
+
+                <div class="source-links">
+
+                    <a
+                        href="https://www.ametregional1.org.ar/"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        AMET Regional 1
+                    </a>
+
+
+                    <a
+                        href="https://documentosboletinoficial.buenosaires.gob.ar/publico/PE-RES-MEDGC-SSPIE-5147-26-ANX-1.pdf"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        Acta salarial GCBA
+                    </a>
+
+
+                    <a
+                        href="https://ute.org.ar/mesa-salarial-junio-2026/"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        Referencia junio/agosto 2026
+                    </a>
+
+                </div>
 
             </article>
 
-
-            <!-- GARANTÍAS -->
-
-            <article>
-
-                <span>
-                    05
-                </span>
-
-                <h3>
-                    Garantías mínimas
-                </h3>
-
-                <p>
-                    La grilla original informa garantías mínimas
-                    y topes diferenciados según cargo.
-
-                    Para no generar resultados engañosos,
-                    esta herramienta usa como cálculo principal
-                    los valores finales publicados.
-                </p>
-
-            </article>
-
-
-            <!-- FUENTE -->
-
-            <article>
-
-                <span>
-                    06
-                </span>
-
-                <h3>
-                    Fuente institucional
-                </h3>
-
-                <p>
-                    AMET Regional 1 · Personería Gremial 1461
-                    <br>
-
-                    Av. Rivadavia 3846, 1.º piso · CABA
-                    <br>
-
-                    Información de contacto verificada
-                    en documentación institucional.
-                </p>
-
-                <a
-                    href="https://www.ametregional1.org.ar/"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Sitio oficial →
-                </a>
-
-            </article>
 
         </section>
 
 
+
         <!-- =================================================
-             INFORMACIÓN DE LA HERRAMIENTA
-        ================================================== -->
+             METODOLOGÍA
+             ================================================= -->
 
         <section class="method">
 
             <h2>
-                Acerca de esta herramienta
+                Acerca del cálculo
             </h2>
 
+
             <p>
-                Versión web preparada a partir de la grilla
-                “Incremento salarial a partir del mes de agosto de 2026”.
 
-                Los importes se muestran como referencia informativa.
+                La columna de bolsillo de la grilla comienza
+                en 1 año de antigüedad.
 
-                Ante diferencias, prevalecen la grilla oficial,
-                la normativa aplicable y la liquidación correspondiente.
+                El valor anterior a esas columnas corresponde
+                al sueldo básico con jerarquía directiva
+                cuando corresponde, por lo que no se utiliza
+                como “0 años” en la calculadora.
+
             </p>
+
+
+            <p>
+
+                Para profesor TP4, TP3, TP2, TP1, TC
+                y horas cátedra, la herramienta conoce su
+                equivalencia horaria y puede consolidar
+                varios cargos.
+
+                Para los demás cargos no se inventan equivalencias
+                ni reglas de tercer cargo: se conserva el valor
+                publicado en la grilla y se informa que
+                el resultado es estimativo.
+
+            </p>
+
 
             <p class="updated">
-                Última actualización de esta versión:
-                septiembre de 2026.
+
+                Período de referencia:
+                agosto de 2026.
+
             </p>
+
 
         </section>
 
@@ -556,40 +916,48 @@
     </main>
 
 
+
     <!-- =====================================================
          PIE DE PÁGINA
-    ====================================================== -->
+         ===================================================== -->
 
     <footer>
+
 
         <div>
 
             <b>
-                AMET · Regional 1
+                AMET Regional 1
+                · Ciudad Autónoma de Buenos Aires
             </b>
 
             <small>
-                Herramienta de consulta salarial · CABA
+                Calculadora salarial de referencia
             </small>
 
         </div>
 
 
+
         <div>
-            Agosto 2026
+
+            <small>
+                Av. Rivadavia 3846 · 1.º Piso · CABA
+            </small>
+
         </div>
+
 
     </footer>
 
 
+
     <!-- =====================================================
          JAVASCRIPT
-    ====================================================== -->
+         ===================================================== -->
 
-    <!-- Datos de la grilla salarial -->
     <script src="data.js"></script>
 
-    <!-- Funcionamiento de la calculadora -->
     <script src="app.js"></script>
 
 

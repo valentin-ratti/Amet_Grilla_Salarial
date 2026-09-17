@@ -3,125 +3,341 @@
 // ============================================================
 
 const D = window.SALARY_DATA;
+
 const A = window.AGES;
 
+const META = window.SALARY_META;
 
-// Selector rápido de elementos HTML
-const $ = (selector) => document.querySelector(selector);
+const HOURS = window.HOURS_EQUIVALENT;
 
-
-// Formateador de moneda argentina
-const fmt = (numero) =>
-    new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: "ARS",
-        maximumFractionDigits: 2
-    }).format(numero);
+const BANDS = window.HOUR_BANDS;
 
 
 // ============================================================
-// VARIABLES DE LA CALCULADORA
+// FUNCIONES GENERALES
 // ============================================================
 
-// Lista de cargos agregados por el usuario
+const $ = (selector) =>
+    document.querySelector(selector);
+
+
+const fmt = (number) =>
+    new Intl.NumberFormat(
+        'es-AR',
+        {
+            style: 'currency',
+            currency: 'ARS',
+            maximumFractionDigits: 2
+        }
+    ).format(number || 0);
+
+
+const compact = (number) =>
+    new Intl.NumberFormat(
+        'es-AR',
+        {
+            notation: 'compact',
+            maximumFractionDigits: 1
+        }
+    ).format(number || 0);
+
+
+// ============================================================
+// ESTADO DE LA CALCULADORA
+// ============================================================
+
 let items = [];
 
-// Número secuencial para identificar cada cargo
 let seq = 0;
 
-// Último cargo seleccionado.
-// Se utiliza para el gráfico comparador.
 let last = null;
 
 
 // ============================================================
-// FUNCIONES AUXILIARES
+// BUSCAR UNA FILA POR CÓDIGO
 // ============================================================
 
+function getRowByCode(code) {
 
-// ------------------------------------------------------------
-// Detectar si el cargo corresponde a horas cátedra
-// ------------------------------------------------------------
+    return D.find(
+        (row) => row.code === code
+    );
 
-const isHour = (cargo) =>
-    cargo.name.includes("HS CATEDRA");
+}
 
 
-// ------------------------------------------------------------
-// Generar opciones del selector de cargos
-// ------------------------------------------------------------
+// ============================================================
+// POSICIÓN DEL VALOR DE ANTIGÜEDAD
+// ============================================================
+//
+// pocket[0] NO es bolsillo.
+//
+// pocket[0] corresponde a:
+// Sueldo con jerarquía.
+//
+// Por eso:
+// 1 año  -> pocket[1]
+// 4 años -> pocket[2]
+// etc.
+//
+// ============================================================
 
-function co(selected = "") {
+function pocketIndex(age) {
+
+    const position =
+        A.indexOf(
+            Number(age)
+        );
+
+
+    return position === -1
+        ? -1
+        : position + 1;
+
+}
+
+
+// ============================================================
+// OBTENER SUELDO DE BOLSILLO
+// ============================================================
+
+function pocketValue(
+    row,
+    age
+) {
+
+    if (!row) {
+        return 0;
+    }
+
+
+    const index =
+        pocketIndex(age);
+
+
+    if (index < 1) {
+        return 0;
+    }
+
+
+    return Number(
+        row.pocket[index] || 0
+    );
+
+}
+
+
+// ============================================================
+// IDENTIFICAR FILAS INTERNAS DE TOPES
+// ============================================================
+
+function isBandOnly(row) {
+
+    return (
+        row &&
+        BANDS.bandOnlyCodes.includes(
+            row.code
+        )
+    );
+
+}
+
+
+// ============================================================
+// IDENTIFICAR HORA CÁTEDRA VARIABLE
+// ============================================================
+
+function isVariableHour(row) {
+
+    return (
+        row &&
+        row.code === BANDS.regular
+    );
+
+}
+
+
+// ============================================================
+// IDENTIFICAR CARGOS CON EQUIVALENCIA HORARIA
+// ============================================================
+
+function isHourBased(row) {
+
+    return (
+        row &&
+        Object.prototype.hasOwnProperty.call(
+            HOURS,
+            row.code
+        )
+    );
+
+}
+
+
+// ============================================================
+// HORAS EQUIVALENTES DE UN CARGO
+// ============================================================
+
+function equivalentHours(item) {
+
+    if (!valid(item)) {
+        return 0;
+    }
+
+
+    const row =
+        D[
+            Number(item.cargo)
+        ];
+
+
+    if (!isHourBased(row)) {
+        return 0;
+    }
+
+
+    // Hora cátedra común:
+    // la cantidad la ingresa el usuario.
+
+    if (isVariableHour(row)) {
+
+        return Math.max(
+            1,
+            Number(item.qty) || 1
+        );
+
+    }
+
+
+    // Profesor TP / TC:
+    // toma las horas fijas del cargo.
+
+    return (
+        HOURS[row.code] || 0
+    );
+
+}
+
+
+// ============================================================
+// OPCIONES DE CARGOS
+// ============================================================
+
+function cargoOptions(
+    selected = ''
+) {
+
+    const options =
+        D
+            .map(
+                (row, index) => ({
+                    row,
+                    index
+                })
+            )
+
+            // HS >30 y HS >40
+            // se usan internamente.
+            .filter(
+                ({ row }) =>
+                    !isBandOnly(row)
+            )
+
+            .map(
+                ({ row, index }) => {
+
+                    const isSelected =
+                        String(index) ===
+                        String(selected)
+                            ? 'selected'
+                            : '';
+
+
+                    return `
+                        <option
+                            value="${index}"
+                            ${isSelected}
+                        >
+                            ${row.code}
+                            ·
+                            ${row.name}
+                        </option>
+                    `;
+
+                }
+            )
+
+            .join('');
+
 
     return `
         <option value="">
             — Seleccionar cargo —
         </option>
-    ` +
-    D.map((cargo, index) => {
 
-        const codigo = cargo.code.replace(/[A-Z]$/, "");
+        ${options}
+    `;
 
-        const seleccionado =
-            String(index) === String(selected)
-                ? "selected"
-                : "";
-
-        return `
-            <option
-                value="${index}"
-                ${seleccionado}
-            >
-                ${codigo} · ${cargo.name}
-            </option>
-        `;
-
-    }).join("");
 }
 
 
-// ------------------------------------------------------------
-// Generar opciones del selector de antigüedad
-// ------------------------------------------------------------
+// ============================================================
+// OPCIONES DE ANTIGÜEDAD
+// ============================================================
 
-function ao(selected = "") {
+function ageOptions(
+    selected = ''
+) {
 
-    return `
-        <option value="">
-            — Seleccionar antigüedad —
-        </option>
-    ` +
-    A.map((antiguedad) => {
+    return (
 
-        const seleccionado =
-            String(antiguedad) === String(selected)
-                ? "selected"
-                : "";
-
-        let texto;
-
-        if (antiguedad === 0) {
-
-            texto = "Sin antigüedad";
-
-        } else {
-
-            texto =
-                antiguedad +
-                " año" +
-                (antiguedad === 1 ? "" : "s");
-        }
-
-        return `
-            <option
-                value="${antiguedad}"
-                ${seleccionado}
-            >
-                ${texto}
+        `
+            <option value="">
+                — Seleccionar antigüedad —
             </option>
-        `;
+        `
 
-    }).join("");
+        +
+
+        A
+            .map(
+                (age) => {
+
+                    const isSelected =
+                        String(age) ===
+                        String(selected)
+                            ? 'selected'
+                            : '';
+
+
+                    const percent =
+                        META.agePercent[age];
+
+
+                    const label =
+                        `${age} año${
+                            age === 1
+                                ? ''
+                                : 's'
+                        } · ${percent}%`;
+
+
+                    return `
+                        <option
+                            value="${age}"
+                            ${isSelected}
+                        >
+                            ${label}
+                        </option>
+                    `;
+
+                }
+            )
+
+            .join('')
+
+    );
+
 }
 
 
@@ -131,34 +347,39 @@ function ao(selected = "") {
 
 function add() {
 
-    items.push({
+    items.push(
+        {
+            id: ++seq,
 
-        id: ++seq,
+            cargo: '',
 
-        cargo: "",
+            age: '',
 
-        age: "",
-
-        qty: 1
-
-    });
+            qty: 1
+        }
+    );
 
 
     render();
 
 
-    // Colocar automáticamente el cursor
-    // sobre el selector del nuevo cargo.
+    setTimeout(
+        () => {
 
-    setTimeout(() => {
+            const select =
+                document.querySelector(
+                    `[data-id="${seq}"] select`
+                );
 
-        document
-            .querySelector(
-                `[data-id="${seq}"] select`
-            )
-            .focus();
 
-    }, 10);
+            if (select) {
+                select.focus();
+            }
+
+        },
+        10
+    );
+
 }
 
 
@@ -168,847 +389,1690 @@ function add() {
 
 function remove(id) {
 
-    items = items.filter(
-        (item) => item.id !== id
-    );
+    items =
+        items.filter(
+            (item) =>
+                item.id !== id
+        );
+
 
     render();
+
 }
 
 
 // ============================================================
-// ACTUALIZAR DATOS DE UN CARGO
+// ACTUALIZAR CARGO
 // ============================================================
 
-function update(id, field, value) {
+function update(
+    id,
+    field,
+    value
+) {
 
-    const item = items.find(
-        (item) => item.id === id
-    );
+    const item =
+        items.find(
+            (entry) =>
+                entry.id === id
+        );
+
+
+    if (!item) {
+        return;
+    }
 
 
     item[field] = value;
 
 
-    // Si cambia el cargo,
-    // se reinicia la antigüedad.
+    if (field === 'cargo') {
 
-    if (field === "cargo") {
+        item.age = '';
 
-        item.age = "";
+        item.qty = 1;
 
-
-        // Guardamos el último cargo
-        // para mostrarlo en el comparador.
 
         last =
-            value === ""
+            value === ''
                 ? last
-                : +value;
+                : Number(value);
+
     }
 
 
     render();
+
 }
 
 
 // ============================================================
-// COMPROBAR SI UN CARGO ESTÁ COMPLETO
+// VALIDAR CARGO
 // ============================================================
 
 function valid(item) {
 
     return (
-        item.cargo !== "" &&
-        item.age !== ""
+        item.cargo !== '' &&
+        item.age !== ''
     );
+
 }
 
 
 // ============================================================
-// CALCULAR VALOR DE UN CARGO
+// VALOR INDIVIDUAL DEL CARGO
 // ============================================================
 
 function value(item) {
-
-    // Si falta cargo o antigüedad,
-    // no se realiza ningún cálculo.
 
     if (!valid(item)) {
         return 0;
     }
 
 
-    const cargo = D[+item.cargo];
+    const row =
+        D[
+            Number(item.cargo)
+        ];
 
 
-    // --------------------------------------------------------
-    // Cantidad
-    // --------------------------------------------------------
-    //
-    // Para horas cátedra:
-    // se utiliza la cantidad ingresada.
-    //
-    // Para cargos:
-    // siempre se considera una unidad.
-    // --------------------------------------------------------
+    const unitPocket =
+        pocketValue(
+            row,
+            item.age
+        );
 
-    const cantidad =
-        isHour(cargo)
-            ? Math.max(
+
+    // Hora cátedra suelta.
+    // Se multiplica por la cantidad.
+
+    if (isVariableHour(row)) {
+
+        return (
+            unitPocket *
+            Math.max(
                 1,
-                +item.qty || 1
+                Number(item.qty) || 1
             )
-            : 1;
+        );
+
+    }
 
 
-    // Buscar posición de la antigüedad
-    // dentro del arreglo de antigüedades.
+    // Los demás cargos
+    // ya tienen su valor completo.
 
-    const indiceAntiguedad =
-        A.indexOf(+item.age);
+    return unitPocket;
 
-
-    // Obtener sueldo de bolsillo
-    // correspondiente.
-
-    return (
-        cargo.pocket[indiceAntiguedad] *
-        cantidad
-    );
 }
 
 
 // ============================================================
-// RENDERIZAR CALCULADORA
+// CÁLCULO DE TRAMOS HORARIOS
+// ============================================================
+//
+// La grilla AMET tiene:
+//
+// 5099  = HS CATEDRA
+// 5099B = HS CATEDRA >30
+// 5099C = HS CATEDRA >40
+//
+// Se calcula:
+//
+// 1 a 30 HC  -> tarifa normal
+// 31 a 40 HC -> tarifa >30
+// 41+ HC     -> tarifa >40
+//
 // ============================================================
 
-function render() {
+function hourBandCalculation(
+    totalHours,
+    age
+) {
 
-    // --------------------------------------------------------
-    // GENERAR TODOS LOS CARGOS
-    // --------------------------------------------------------
+    const regularRow =
+        getRowByCode(
+            BANDS.regular
+        );
 
-    $("#items").innerHTML =
-        items.map((item, numero) => {
 
-            // Cargo seleccionado
-            const cargo =
-                item.cargo !== ""
-                    ? D[+item.cargo]
-                    : null;
+    const over30Row =
+        getRowByCode(
+            BANDS.over30
+        );
 
 
-            // ¿Es hora cátedra?
-            const esHora =
-                cargo &&
-                isHour(cargo);
+    const over40Row =
+        getRowByCode(
+            BANDS.over40
+        );
 
 
-            // ¿Está completo?
-            const completo =
-                valid(item);
+    const regularRate =
+        pocketValue(
+            regularRow,
+            age
+        );
 
 
-            // Código del cargo
-            const codigo =
-                cargo
-                    ? cargo.code.replace(
-                        /[A-Z]$/,
-                        ""
-                    )
-                    : "";
+    const over30Rate =
+        pocketValue(
+            over30Row,
+            age
+        );
 
 
-            // Cantidad
-            const cantidad =
-                esHora
-                    ? Math.max(
-                        1,
-                        +item.qty || 1
-                    )
-                    : 1;
-
-
-            // Básico
-            const basico =
-                cargo
-                    ? cargo.basic * cantidad
-                    : 0;
-
-
-            // ------------------------------------------------
-            // HTML DEL CARGO
-            // ------------------------------------------------
-
-            return `
-
-                <div
-                    class="line-item"
-                    data-id="${item.id}"
-                >
-
-                    <!-- CABECERA -->
-
-                    <div class="line-head">
-
-                        <b>
-                            Cargo ${numero + 1}
-                        </b>
-
-                        <button
-                            class="remove"
-                            onclick="remove(${item.id})"
-                        >
-                            Eliminar ×
-                        </button>
-
-                    </div>
-
-
-                    <!-- CUERPO -->
-
-                    <div class="line-body">
-
-
-                        <!-- SELECTORES -->
-
-                        <div class="line-grid">
-
-
-                            <!-- CARGO -->
-
-                            <label>
-
-                                Cargo / función
-
-                                <select
-                                    onchange="
-                                        update(
-                                            ${item.id},
-                                            'cargo',
-                                            this.value
-                                        )
-                                    "
-                                >
-
-                                    ${co(item.cargo)}
-
-                                </select>
-
-                            </label>
-
-
-                            <!-- ANTIGÜEDAD -->
-
-                            <label>
-
-                                Antigüedad
-
-                                <select
-                                    ${cargo ? "" : "disabled"}
-
-                                    onchange="
-                                        update(
-                                            ${item.id},
-                                            'age',
-                                            this.value
-                                        )
-                                    "
-                                >
-
-                                    ${ao(item.age)}
-
-                                </select>
-
-                            </label>
-
-
-                            <!-- CANTIDAD -->
-
-                            <label
-                                style="
-                                    opacity:
-                                    ${esHora ? 1 : 0.48}
-                                "
-                            >
-
-                                Cantidad
-                                ${esHora ? " de horas" : ""}
-
-
-                                <input
-                                    type="number"
-
-                                    min="1"
-                                    max="60"
-
-                                    value="${item.qty}"
-
-                                    ${esHora ? "" : "disabled"}
-
-                                    onchange="
-                                        update(
-                                            ${item.id},
-                                            'qty',
-                                            this.value
-                                        )
-                                    "
-                                >
-
-
-                                <small>
-
-                                    ${
-                                        esHora
-                                            ? "Cantidad de horas."
-                                            : "Una unidad por cargo."
-                                    }
-
-                                </small>
-
-                            </label>
-
-                        </div>
-
-
-                        <!-- RESULTADO DEL CARGO -->
-
-                        <div class="line-result">
-
-                            <div>
-
-                                <small>
-
-                                    ${
-                                        completo
-                                            ? "BOLSILLO DE REFERENCIA"
-                                            : "COMPLETÁ CARGO Y ANTIGÜEDAD"
-                                    }
-
-                                </small>
-
-
-                                <strong>
-
-                                    ${
-                                        completo
-                                            ? fmt(value(item))
-                                            : "—"
-                                    }
-
-                                </strong>
-
-                            </div>
-
-
-                            <!-- INFORMACIÓN ADICIONAL -->
-
-                            <div class="line-meta">
-
-                                ${
-                                    cargo
-
-                                        ? `
-                                            Código ${codigo}
-                                            ·
-                                            Índice ${cargo.index.toLocaleString("es-AR")}
-                                            ·
-                                            Básico ${fmt(basico)}
-                                        `
-
-                                        : `
-                                            Elegí primero un cargo
-                                        `
-                                }
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
-
-
-    // ========================================================
-    // ESTADO INICIAL
-    // ========================================================
-
-    $("#emptyState")
-        .classList
-        .toggle(
-            "hidden",
-            items.length > 0
+    const over40Rate =
+        pocketValue(
+            over40Row,
+            age
         );
 
 
     // ========================================================
-    // BOTÓN AGREGAR OTRO CARGO
+    // TRAMO 1
     // ========================================================
 
-    $("#addArea")
+    const regularHours =
+        Math.min(
+            totalHours,
+            30
+        );
+
+
+    // ========================================================
+    // TRAMO 2
+    // ========================================================
+
+    const over30Hours =
+        Math.min(
+            Math.max(
+                totalHours - 30,
+                0
+            ),
+            10
+        );
+
+
+    // ========================================================
+    // TRAMO 3
+    // ========================================================
+
+    const over40Hours =
+        Math.max(
+            totalHours - 40,
+            0
+        );
+
+
+    // ========================================================
+    // IMPORTES
+    // ========================================================
+
+    const regularAmount =
+        regularHours *
+        regularRate;
+
+
+    const over30Amount =
+        over30Hours *
+        over30Rate;
+
+
+    const over40Amount =
+        over40Hours *
+        over40Rate;
+
+
+    return {
+
+        totalHours,
+
+        regularHours,
+
+        over30Hours,
+
+        over40Hours,
+
+        regularRate,
+
+        over30Rate,
+
+        over40Rate,
+
+        regularAmount,
+
+        over30Amount,
+
+        over40Amount,
+
+        total:
+            regularAmount +
+            over30Amount +
+            over40Amount
+
+    };
+
+}
+
+
+// ============================================================
+// CALCULAR TODOS LOS TOTALES
+// ============================================================
+
+function calculateTotals() {
+
+    const validItems =
+        items.filter(valid);
+
+
+    // ========================================================
+    // SUMA SIMPLE
+    // ========================================================
+
+    const directTotal =
+        validItems.reduce(
+            (sum, item) =>
+                sum + value(item),
+            0
+        );
+
+
+    // ========================================================
+    // CARGOS CON EQUIVALENCIA HORARIA
+    // ========================================================
+
+    const hourItems =
+        validItems.filter(
+            (item) => {
+
+                const row =
+                    D[
+                        Number(item.cargo)
+                    ];
+
+
+                return isHourBased(row);
+
+            }
+        );
+
+
+    // ========================================================
+    // CARGOS SIN EQUIVALENCIA HORARIA
+    // ========================================================
+
+    const nonHourItems =
+        validItems.filter(
+            (item) => {
+
+                const row =
+                    D[
+                        Number(item.cargo)
+                    ];
+
+
+                return !isHourBased(row);
+
+            }
+        );
+
+
+    // ========================================================
+    // TOTAL DE CARGOS NO HORARIOS
+    // ========================================================
+
+    const nonHourTotal =
+        nonHourItems.reduce(
+            (sum, item) =>
+                sum + value(item),
+            0
+        );
+
+
+    // ========================================================
+    // SUMA SIMPLE DE CARGOS HORARIOS
+    // ========================================================
+
+    const directHourTotal =
+        hourItems.reduce(
+            (sum, item) =>
+                sum + value(item),
+            0
+        );
+
+
+    // ========================================================
+    // COMPROBAR ANTIGÜEDAD
+    // ========================================================
+    //
+    // Para consolidar correctamente las HC,
+    // todas deben usar la misma antigüedad.
+    //
+    // ========================================================
+
+    const ageSet =
+        [
+            ...new Set(
+                hourItems.map(
+                    (item) =>
+                        Number(item.age)
+                )
+            )
+        ];
+
+
+    const sameHourAge =
+        ageSet.length <= 1;
+
+
+    // ========================================================
+    // TOTAL DE HORAS
+    // ========================================================
+
+    const totalHours =
+        hourItems.reduce(
+            (sum, item) =>
+                sum +
+                equivalentHours(item),
+            0
+        );
+
+
+    let band = null;
+
+    let estimatedTotal =
+        directTotal;
+
+    let adjustment = 0;
+
+    let canApplyBands = false;
+
+
+    // ========================================================
+    // APLICAR TRAMOS
+    // ========================================================
+
+    if (
+        hourItems.length &&
+        sameHourAge
+    ) {
+
+        band =
+            hourBandCalculation(
+                totalHours,
+                ageSet[0]
+            );
+
+
+        estimatedTotal =
+            nonHourTotal +
+            band.total;
+
+
+        adjustment =
+            estimatedTotal -
+            directTotal;
+
+
+        canApplyBands = true;
+
+    }
+
+
+    return {
+
+        validItems,
+
+        directTotal,
+
+        hourItems,
+
+        nonHourItems,
+
+        nonHourTotal,
+
+        directHourTotal,
+
+        totalHours,
+
+        sameHourAge,
+
+        band,
+
+        estimatedTotal,
+
+        adjustment,
+
+        canApplyBands
+
+    };
+
+}
+
+
+// ============================================================
+// RENDER PRINCIPAL
+// ============================================================
+
+function render() {
+
+
+    // ========================================================
+    // CARGOS
+    // ========================================================
+
+    $('#items').innerHTML =
+        items
+            .map(
+                (item, number) => {
+
+                    const row =
+                        item.cargo !== ''
+                            ? D[
+                                Number(item.cargo)
+                            ]
+                            : null;
+
+
+                    const variableHour =
+                        isVariableHour(row);
+
+
+                    const hourBased =
+                        isHourBased(row);
+
+
+                    const ok =
+                        valid(item);
+
+
+                    const hours =
+                        ok && hourBased
+                            ? equivalentHours(item)
+                            : 0;
+
+
+                    return `
+
+                        <div
+                            class="line-item"
+                            data-id="${item.id}"
+                        >
+
+
+                            <div class="line-head">
+
+                                <b>
+                                    Cargo ${number + 1}
+                                </b>
+
+
+                                <button
+                                    class="remove"
+                                    type="button"
+                                    onclick="remove(${item.id})"
+                                >
+                                    Eliminar ×
+                                </button>
+
+                            </div>
+
+
+
+                            <div class="line-body">
+
+
+                                <div class="line-grid">
+
+
+                                    <label>
+
+                                        Cargo / función
+
+
+                                        <select
+                                            onchange="
+                                                update(
+                                                    ${item.id},
+                                                    'cargo',
+                                                    this.value
+                                                )
+                                            "
+                                        >
+
+                                            ${
+                                                cargoOptions(
+                                                    item.cargo
+                                                )
+                                            }
+
+                                        </select>
+
+                                    </label>
+
+
+
+                                    <label>
+
+                                        Antigüedad
+
+
+                                        <select
+
+                                            ${
+                                                row
+                                                    ? ''
+                                                    : 'disabled'
+                                            }
+
+                                            onchange="
+                                                update(
+                                                    ${item.id},
+                                                    'age',
+                                                    this.value
+                                                )
+                                            "
+                                        >
+
+                                            ${
+                                                ageOptions(
+                                                    item.age
+                                                )
+                                            }
+
+                                        </select>
+
+                                    </label>
+
+
+
+                                    <label
+                                        style="
+                                            opacity:
+                                            ${
+                                                variableHour
+                                                    ? 1
+                                                    : 0.48
+                                            }
+                                        "
+                                    >
+
+
+                                        ${
+                                            variableHour
+                                                ? 'Cantidad de horas'
+                                                : 'Cantidad'
+                                        }
+
+
+                                        <input
+
+                                            type="number"
+
+                                            min="1"
+
+                                            max="120"
+
+                                            value="${item.qty}"
+
+                                            ${
+                                                variableHour
+                                                    ? ''
+                                                    : 'disabled'
+                                            }
+
+                                            onchange="
+                                                update(
+                                                    ${item.id},
+                                                    'qty',
+                                                    this.value
+                                                )
+                                            "
+
+                                        >
+
+
+                                        <small>
+
+                                            ${
+                                                variableHour
+
+                                                    ?
+
+                                                    'Ingresá la cantidad total de horas cátedra de esta línea.'
+
+                                                    :
+
+                                                    hourBased
+
+                                                        ?
+
+                                                        `${HOURS[row.code]} HC equivalentes por cargo.`
+
+                                                        :
+
+                                                        'Una unidad por cargo.'
+                                            }
+
+                                        </small>
+
+                                    </label>
+
+
+                                </div>
+
+
+
+                                <div class="line-result">
+
+
+                                    <div>
+
+                                        <small>
+
+                                            ${
+                                                ok
+                                                    ?
+                                                    'BOLSILLO SEGÚN GRILLA'
+                                                    :
+                                                    'COMPLETÁ CARGO Y ANTIGÜEDAD'
+                                            }
+
+                                        </small>
+
+
+                                        <strong>
+
+                                            ${
+                                                ok
+                                                    ?
+                                                    fmt(
+                                                        value(item)
+                                                    )
+                                                    :
+                                                    '—'
+                                            }
+
+                                        </strong>
+
+                                    </div>
+
+
+
+                                    <div class="line-meta">
+
+                                        ${
+                                            row
+
+                                                ?
+
+                                                `
+                                                    Código ${row.code}
+                                                    · Índice ${row.index.toLocaleString('es-AR')}
+                                                    · Básico ${fmt(row.basic)}
+
+                                                    ${
+                                                        hours
+                                                            ?
+                                                            ` · ${hours} HC equivalentes`
+                                                            :
+                                                            ''
+                                                    }
+                                                `
+
+                                                :
+
+                                                'Elegí primero un cargo'
+                                        }
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+                    `;
+
+                }
+            )
+
+            .join('');
+
+
+    // ========================================================
+    // ESTADO VACÍO
+    // ========================================================
+
+    $('#emptyState')
         .classList
         .toggle(
-            "hidden",
+            'hidden',
+            items.length > 0
+        );
+
+
+    $('#addArea')
+        .classList
+        .toggle(
+            'hidden',
             items.length === 0
         );
 
 
     // ========================================================
-    // CARGOS COMPLETOS
+    // TOTALES
     // ========================================================
 
-    const cargosCompletos =
-        items.filter(valid);
+    const totals =
+        calculateTotals();
 
 
-    // ========================================================
-    // TOTAL
-    // ========================================================
-
-    const total =
-        cargosCompletos.reduce(
-            (suma, item) =>
-                suma + value(item),
-            0
-        );
+    renderTotals(
+        totals
+    );
 
 
-    // Mostrar u ocultar total
+    renderBankComparison(
+        totals
+    );
 
-    $("#grand")
-        .classList
-        .toggle(
-            "hidden",
-            !cargosCompletos.length
-        );
-
-
-    // Mostrar importe
-
-    $("#grandTotal").textContent =
-        fmt(total);
-
-
-    // Descripción
-
-    $("#grandDesc").textContent =
-        cargosCompletos.length
-
-            ? `
-                ${cargosCompletos.length}
-                ${
-                    cargosCompletos.length === 1
-                        ? "cargo seleccionado"
-                        : "cargos seleccionados"
-                }
-            `
-
-            : "";
-
-
-    // ========================================================
-    // ACTUALIZAR GRÁFICO
-    // ========================================================
 
     bars(
         last === null
             ? null
             : D[last]
     );
+
 }
 
 
 // ============================================================
-// BOTONES DE LA CALCULADORA
+// MOSTRAR TOTALES
 // ============================================================
 
+function renderTotals(
+    totals
+) {
 
-// Agregar primer cargo
-
-$("#firstAdd").onclick = add;
-
-
-// Agregar otro cargo
-
-$("#addItem").onclick = add;
+    const hasValid =
+        totals.validItems.length > 0;
 
 
-// Limpiar toda la liquidación
-
-$("#clearAll").onclick = () => {
-
-    items = [];
-
-    last = null;
-
-    render();
-};
+    $('#grand')
+        .classList
+        .toggle(
+            'hidden',
+            !hasValid
+        );
 
 
-// ============================================================
-// GRÁFICO COMPARADOR DE ANTIGÜEDAD
-// ============================================================
+    $('#settlement')
+        .classList
+        .toggle(
+            'hidden',
+            !hasValid
+        );
 
-function bars(cargo) {
 
-    // --------------------------------------------------------
-    // Si todavía no hay cargo seleccionado
-    // --------------------------------------------------------
-
-    if (!cargo) {
-
-        $("#bars").innerHTML = `
-
-            <div
-                style="
-                    color: var(--muted);
-                    padding: 60px 0;
-                "
-            >
-
-                Seleccioná un cargo para ver
-                la comparación por antigüedad.
-
-            </div>
-        `;
-
+    if (!hasValid) {
         return;
     }
 
 
-    // --------------------------------------------------------
-    // Valor máximo
-    // --------------------------------------------------------
+    // ========================================================
+    // SUMA SIMPLE
+    // ========================================================
 
-    const maximo =
-        Math.max(...cargo.pocket);
-
-
-    // --------------------------------------------------------
-    // Generar barras
-    // --------------------------------------------------------
-
-    $("#bars").innerHTML =
-        cargo.pocket
-            .map((valor, index) => {
-
-                const altura =
-                    Math.max(
-                        3,
-                        valor / maximo * 190
-                    );
+    $('#grandTotal')
+        .textContent =
+            fmt(
+                totals.directTotal
+            );
 
 
-                const antiguedad =
-                    A[index] === 0
-                        ? "0"
-                        : A[index] + " a.";
+    $('#grandDesc')
+        .textContent =
+            `${totals.validItems.length} ${
+                totals.validItems.length === 1
+                    ?
+                    'cargo calculado'
+                    :
+                    'cargos calculados'
+            }`;
 
 
-                const valorCompacto =
-                    new Intl.NumberFormat(
-                        "es-AR",
-                        {
-                            notation: "compact",
-                            maximumFractionDigits: 1
-                        }
-                    ).format(valor);
+    // ========================================================
+    // TOTAL ESTIMADO
+    // ========================================================
+
+    $('#estimatedTotal')
+        .textContent =
+            fmt(
+                totals.estimatedTotal
+            );
 
 
-                return `
+    $('#adjustmentTotal')
+        .textContent =
+            fmt(
+                totals.adjustment
+            );
 
-                    <div class="bar">
 
-                        <i
-                            style="
-                                height: ${altura}px
-                            "
-                        ></i>
+    $('#totalHours')
+        .textContent =
+            totals.hourItems.length
 
-                        <b>
-                            ${antiguedad}
-                        </b>
+                ?
 
-                        <small>
-                            ${valorCompacto}
-                        </small>
+                `${totals.totalHours} HC`
 
-                    </div>
-                `;
+                :
 
-            })
-            .join("");
+                '—';
+
+
+    // ========================================================
+    // SIN CARGOS HORARIOS
+    // ========================================================
+
+    if (
+        !totals.hourItems.length
+    ) {
+
+        $('#bandsStatus')
+            .textContent =
+
+                'No hay cargos expresados en horas cátedra. El total estimado coincide con la suma de la grilla.';
+
+
+        $('#bandBreakdown')
+            .innerHTML = '';
+
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // ANTIGÜEDADES DISTINTAS
+    // ========================================================
+
+    if (
+        !totals.sameHourAge
+    ) {
+
+        $('#bandsStatus')
+            .textContent =
+
+                'Los cargos horarios tienen antigüedades distintas. Para evitar un cálculo arbitrario, no se aplicó el ajuste automático por tramos.';
+
+
+        $('#bandBreakdown')
+            .innerHTML = '';
+
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // INFORMACIÓN
+    // ========================================================
+
+    $('#bandsStatus')
+        .textContent =
+
+            'Para los cargos expresados en horas, el motor consolida la carga total de la persona y aplica las tres filas diferenciadas publicadas en la grilla AMET.';
+
+
+    const band =
+        totals.band;
+
+
+    // ========================================================
+    // DETALLE DE TRAMOS
+    // ========================================================
+
+    $('#bandBreakdown')
+        .innerHTML = `
+
+
+            <div class="band-row">
+
+                <span>
+                    Horas 1 a 30
+                </span>
+
+                <b>
+                    ${band.regularHours} HC
+                    ×
+                    ${fmt(band.regularRate)}
+                </b>
+
+                <strong>
+                    ${fmt(band.regularAmount)}
+                </strong>
+
+            </div>
+
+
+
+            <div class="band-row">
+
+                <span>
+                    Horas 31 a 40
+                </span>
+
+                <b>
+                    ${band.over30Hours} HC
+                    ×
+                    ${fmt(band.over30Rate)}
+                </b>
+
+                <strong>
+                    ${fmt(band.over30Amount)}
+                </strong>
+
+            </div>
+
+
+
+            <div class="band-row">
+
+                <span>
+                    Horas superiores a 40
+                </span>
+
+                <b>
+                    ${band.over40Hours} HC
+                    ×
+                    ${fmt(band.over40Rate)}
+                </b>
+
+                <strong>
+                    ${fmt(band.over40Amount)}
+                </strong>
+
+            </div>
+
+
+        `;
+
 }
 
 
 // ============================================================
-// GRILLA SALARIAL
+// MOSTRAR COMPARACIÓN CON CUENTA SUELDO
 // ============================================================
 
+function renderBankComparison(
+    totals
+) {
 
-// ------------------------------------------------------------
-// ENCABEZADO DE LA TABLA
-// ------------------------------------------------------------
-
-$("#thead").innerHTML = `
-
-    <tr>
-
-        <th>
-            Código · Cargo
-        </th>
-
-        ${
-            A.map((antiguedad) => {
-
-                return `
-
-                    <th>
-
-                        ${
-                            antiguedad === 0
-                                ? "Sin antig."
-                                : antiguedad + " años"
-                        }
-
-                    </th>
-                `;
-
-            }).join("")
-        }
-
-    </tr>
-`;
+    const hasValid =
+        totals.validItems.length > 0;
 
 
-// ============================================================
-// GENERAR TABLA
-// ============================================================
+    $('#bankComparison')
+        .classList
+        .toggle(
+            'hidden',
+            !hasValid
+        );
 
-function table(busqueda = "") {
 
-    // --------------------------------------------------------
-    // Normalizar búsqueda
-    // --------------------------------------------------------
+    if (!hasValid) {
 
-    const consulta =
-        busqueda
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(
-                /[\u0300-\u036f]/g,
-                ""
+        $('#bankDifferenceBox')
+            .classList
+            .add(
+                'hidden'
             );
 
 
-    // --------------------------------------------------------
-    // Filtrar cargos
-    // --------------------------------------------------------
+        return;
 
-    const resultados =
-        D.filter((cargo) => {
+    }
 
-            const texto =
-                (
-                    cargo.code +
-                    " " +
-                    cargo.name
+
+    $('#bankExpected')
+        .textContent =
+            fmt(
+                totals.estimatedTotal
+            );
+
+
+    updateBankDifference(
+        totals.estimatedTotal
+    );
+
+}
+
+
+// ============================================================
+// COMPARAR CON EL MONTO ACREDITADO
+// ============================================================
+
+function updateBankDifference(
+    expectedTotal
+) {
+
+    const input =
+        $('#bankAmount');
+
+
+    const box =
+        $('#bankDifferenceBox');
+
+
+    const differenceElement =
+        $('#bankDifference');
+
+
+    const statusElement =
+        $('#bankStatus');
+
+
+    if (
+        !input ||
+        !box
+    ) {
+        return;
+    }
+
+
+    const received =
+        Number(
+            input.value
+        );
+
+
+    // ========================================================
+    // CAMPO VACÍO
+    // ========================================================
+
+    if (
+        !input.value.trim() ||
+        Number.isNaN(received)
+    ) {
+
+        box
+            .classList
+            .add(
+                'hidden'
+            );
+
+
+        return;
+
+    }
+
+
+    box
+        .classList
+        .remove(
+            'hidden'
+        );
+
+
+    box
+        .classList
+        .remove(
+            'difference-ok',
+            'difference-positive',
+            'difference-negative'
+        );
+
+
+    const difference =
+        received -
+        expectedTotal;
+
+
+    differenceElement
+        .textContent =
+            fmt(
+                Math.abs(
+                    difference
                 )
-                    .toLowerCase()
-                    .normalize("NFD")
-                    .replace(
-                        /[\u0300-\u036f]/g,
-                        ""
-                    );
-
-
-            return texto.includes(
-                consulta
             );
-        });
 
 
-    // --------------------------------------------------------
-    // Generar filas
-    // --------------------------------------------------------
+    // ========================================================
+    // COINCIDE
+    // ========================================================
 
-    $("#tbody").innerHTML =
-        resultados
-            .map((cargo) => {
+    if (
+        Math.abs(difference) < 1
+    ) {
 
-                const codigo =
-                    cargo.code.replace(
-                        /[A-Z]$/,
-                        ""
-                    );
+        statusElement
+            .textContent =
 
-
-                const valores =
-                    cargo.pocket
-                        .map(fmt)
-                        .map((valor) => {
-
-                            return `
-                                <td>
-                                    ${valor}
-                                </td>
-                            `;
-
-                        })
-                        .join("");
+                'El monto acreditado coincide con la estimación.';
 
 
-                return `
+        box
+            .classList
+            .add(
+                'difference-ok'
+            );
 
-                    <tr>
 
-                        <td>
+        return;
+
+    }
+
+
+    // ========================================================
+    // RECIBIÓ MÁS
+    // ========================================================
+
+    if (
+        difference > 0
+    ) {
+
+        statusElement
+            .textContent =
+
+                `Recibiste ${fmt(difference)} más que la estimación.`;
+
+
+        box
+            .classList
+            .add(
+                'difference-positive'
+            );
+
+
+        return;
+
+    }
+
+
+    // ========================================================
+    // RECIBIÓ MENOS
+    // ========================================================
+
+    statusElement
+        .textContent =
+
+            `Recibiste ${fmt(Math.abs(difference))} menos que la estimación.`;
+
+
+    box
+        .classList
+        .add(
+            'difference-negative'
+        );
+
+}
+
+
+// ============================================================
+// GRÁFICO POR ANTIGÜEDAD
+// ============================================================
+
+function bars(row) {
+
+    if (!row) {
+
+        $('#bars')
+            .innerHTML = `
+
+                <div class="bars-empty">
+
+                    Seleccioná un cargo
+                    para ver la comparación
+                    por antigüedad.
+
+                </div>
+
+            `;
+
+
+        return;
+
+    }
+
+
+    const values =
+        A.map(
+            (age) =>
+                pocketValue(
+                    row,
+                    age
+                )
+        );
+
+
+    const max =
+        Math.max(
+            ...values
+        );
+
+
+    $('#bars')
+        .innerHTML =
+            values
+                .map(
+                    (value, index) => `
+
+                        <div class="bar">
+
+                            <i
+                                style="
+                                    height:
+                                    ${
+                                        Math.max(
+                                            3,
+                                            (
+                                                value /
+                                                max
+                                            ) * 190
+                                        )
+                                    }px
+                                "
+                            ></i>
+
 
                             <b>
-                                ${codigo}
-                                ·
-                                ${cargo.name}
+                                ${A[index]} a.
                             </b>
 
-                        </td>
 
-                        ${valores}
+                            <small>
+                                ${compact(value)}
+                            </small>
 
-                    </tr>
-                `;
+                        </div>
 
-            })
-            .join("");
+                    `
+                )
+
+                .join('');
+
 }
 
 
 // ============================================================
-// BUSCADOR
+// TABLA COMPLETA
 // ============================================================
 
-$("#search")
-    .addEventListener(
-        "input",
-        (event) => {
+function renderTable(
+    query = ''
+) {
 
-            table(
-                event.target.value
+    const normalized =
+        query
+            .toLowerCase()
+            .normalize(
+                'NFD'
+            )
+            .replace(
+                /[\u0300-\u036f]/g,
+                ''
             );
+
+
+    const rows =
+        D.filter(
+            (row) =>
+
+                `${row.code} ${row.name}`
+
+                    .toLowerCase()
+
+                    .normalize(
+                        'NFD'
+                    )
+
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ''
+                    )
+
+                    .includes(
+                        normalized
+                    )
+
+        );
+
+
+    $('#tbody')
+        .innerHTML =
+            rows
+                .map(
+                    (row) => `
+
+                        <tr>
+
+
+                            <td>
+
+                                <b>
+                                    ${row.code}
+                                    ·
+                                    ${row.name}
+                                </b>
+
+                            </td>
+
+
+                            <td>
+                                ${fmt(row.basic)}
+                            </td>
+
+
+                            <td>
+                                ${fmt(row.fixed)}
+                            </td>
+
+
+                            <td>
+                                ${fmt(row.pocket[0])}
+                            </td>
+
+
+                            ${
+                                A
+                                    .map(
+                                        (age) => `
+
+                                            <td>
+                                                ${
+                                                    fmt(
+                                                        pocketValue(
+                                                            row,
+                                                            age
+                                                        )
+                                                    )
+                                                }
+                                            </td>
+
+                                        `
+                                    )
+
+                                    .join('')
+                            }
+
+
+                        </tr>
+
+                    `
+                )
+
+                .join('');
+
+}
+
+
+// ============================================================
+// ENCABEZADO DE TABLA
+// ============================================================
+
+$('#thead')
+    .innerHTML = `
+
+        <tr>
+
+            <th>
+                Código · Cargo
+            </th>
+
+            <th>
+                Básico
+            </th>
+
+            <th>
+                Suma fija
+            </th>
+
+            <th>
+                Sueldo c/ jerarquía
+            </th>
+
+            ${
+                A
+                    .map(
+                        (age) => `
+
+                            <th>
+                                ${age} años
+                            </th>
+
+                        `
+                    )
+
+                    .join('')
+            }
+
+        </tr>
+
+    `;
+
+
+// ============================================================
+// BOTÓN PRIMER CARGO
+// ============================================================
+
+$('#firstAdd')
+    .onclick =
+        add;
+
+
+// ============================================================
+// BOTÓN AGREGAR CARGO
+// ============================================================
+
+$('#addItem')
+    .onclick =
+        add;
+
+
+// ============================================================
+// LIMPIAR CALCULADORA
+// ============================================================
+
+$('#clearAll')
+    .onclick =
+        () => {
+
+            items = [];
+
+            last = null;
+
+
+            $('#bankAmount')
+                .value = '';
+
+
+            render();
+
+        };
+
+
+// ============================================================
+// COMPARACIÓN CON BANCO
+// ============================================================
+
+$('#bankAmount')
+    .addEventListener(
+        'input',
+        () => {
+
+            const totals =
+                calculateTotals();
+
+
+            if (
+                totals.validItems.length
+            ) {
+
+                updateBankDifference(
+                    totals.estimatedTotal
+                );
+
+            }
+
         }
     );
 
 
 // ============================================================
-// DESCARGAR GRILLA EN CSV
+// BUSCADOR DE GRILLA
 // ============================================================
 
-$("#csv").onclick = () => {
+$('#search')
+    .addEventListener(
+        'input',
+        (event) => {
 
-    // --------------------------------------------------------
-    // Crear matriz de datos
-    // --------------------------------------------------------
+            renderTable(
+                event.target.value
+            );
 
-    const lineas = [
-
-        [
-            "Código",
-            "Cargo",
-
-            ...A.map(
-                (antiguedad) =>
-                    antiguedad + " años"
-            )
-        ],
-
-
-        ...D.map((cargo) => [
-
-            cargo.code,
-
-            cargo.name,
-
-            ...cargo.pocket
-
-        ])
-
-    ];
-
-
-    // --------------------------------------------------------
-    // Convertir a CSV
-    // --------------------------------------------------------
-
-    const csv =
-        "\ufeff" +
-
-        lineas
-            .map((fila) => {
-
-                return fila
-                    .map((valor) => {
-
-                        return `"${String(valor)
-                            .replaceAll(
-                                '"',
-                                '""'
-                            )}"`;
-
-                    })
-                    .join(";");
-
-            })
-            .join("\n");
-
-
-    // --------------------------------------------------------
-    // Crear archivo
-    // --------------------------------------------------------
-
-    const enlace =
-        document.createElement("a");
-
-
-    enlace.href =
-        URL.createObjectURL(
-
-            new Blob(
-                [csv],
-                {
-                    type:
-                        "text/csv;charset=utf-8"
-                }
-            )
-
-        );
-
-
-    enlace.download =
-        "grilla-AMET-agosto-2026.csv";
-
-
-    // --------------------------------------------------------
-    // Descargar
-    // --------------------------------------------------------
-
-    enlace.click();
-};
+        }
+    );
 
 
 // ============================================================
-// INICIALIZACIÓN
+// DESCARGAR CSV
 // ============================================================
 
+$('#csv')
+    .onclick =
+        () => {
 
-// Generar tabla salarial
 
-table();
+            const lines = [
+
+                [
+                    'Código',
+                    'Cargo',
+                    'Índice',
+                    'Valor índice',
+                    'Básico',
+                    'Suma fija',
+                    'Jerarquía',
+                    'Sueldo c/ jerarquía',
+
+                    ...A.map(
+                        (age) =>
+                            `${age} años`
+                    )
+                ],
 
 
-// Inicializar calculadora vacía
+                ...D.map(
+                    (row) => [
+
+                        row.code,
+
+                        row.name,
+
+                        row.index,
+
+                        row.indexValue,
+
+                        row.basic,
+
+                        row.fixed,
+
+                        row.hierarchy,
+
+                        row.pocket[0],
+
+                        ...A.map(
+                            (age) =>
+                                pocketValue(
+                                    row,
+                                    age
+                                )
+                        )
+
+                    ]
+                )
+
+            ];
+
+
+            const csv =
+
+                '\ufeff'
+
+                +
+
+                lines
+                    .map(
+                        (row) =>
+
+                            row
+                                .map(
+                                    (value) =>
+
+                                        `"${String(value).replaceAll(
+                                            '"',
+                                            '""'
+                                        )}"`
+
+                                )
+
+                                .join(';')
+
+                    )
+
+                    .join('\n');
+
+
+            const link =
+                document.createElement(
+                    'a'
+                );
+
+
+            link.href =
+                URL.createObjectURL(
+
+                    new Blob(
+                        [csv],
+                        {
+                            type:
+                                'text/csv;charset=utf-8'
+                        }
+                    )
+
+                );
+
+
+            link.download =
+                'grilla-AMET-agosto-2026.csv';
+
+
+            link.click();
+
+
+            URL.revokeObjectURL(
+                link.href
+            );
+
+        };
+
+
+// ============================================================
+// INICIO
+// ============================================================
+
+renderTable();
 
 render();
