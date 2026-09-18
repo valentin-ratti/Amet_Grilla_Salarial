@@ -1,14 +1,3 @@
-/* ============================================================
-   AMET REGIONAL 1
-   CALCULADORA Y GRILLA SALARIAL
-   CABA - AGOSTO 2026
-   ============================================================ */
-
-
-/* ============================================================
-   01. CONFIGURACIÓN GENERAL
-   ============================================================ */
-
 * {
     box-sizing: border-box;
 }
@@ -27,7 +16,6 @@
     --line: #d9e3ea;
 
     --bg: #f3f6f8;
-
 }
 
 
@@ -51,16 +39,13 @@ body {
         Segoe UI,
         Arial,
         sans-serif;
-
 }
 
 
 button,
 input,
 select {
-
     font: inherit;
-
 }
 
 
@@ -75,7 +60,7 @@ button {
 
 
 /* ============================================================
-   02. ENCABEZADO
+   HEADER
    ============================================================ */
 
 header {
@@ -104,7 +89,6 @@ header {
     top: 0;
 
     z-index: 20;
-
 }
 
 
@@ -115,7 +99,6 @@ header {
     align-items: center;
 
     gap: 12px;
-
 }
 
 
@@ -124,7 +107,6 @@ header {
     display: flex;
 
     flex-direction: column;
-
 }
 
 
@@ -133,7 +115,6 @@ header {
     color: var(--muted);
 
     margin-top: 2px;
-
 }
 
 
@@ -159,12 +140,11 @@ header {
     font-size: 12px;
 
     font-weight: 900;
-
 }
 
 
 /* ============================================================
-   03. NAVEGACIÓN
+   NAVEGACIÓN
    ============================================================ */
 
 nav {
@@ -172,7 +152,6 @@ nav {
     display: flex;
 
     gap: 22px;
-
 }
 
 
@@ -185,12 +164,11 @@ nav a {
     font-size: 13px;
 
     font-weight: 800;
-
 }
 
 
 /* ============================================================
-   04. CONTENIDO PRINCIPAL
+   GENERAL
    ============================================================ */
 
 main {
@@ -203,12 +181,11 @@ main {
         0
         24px
         70px;
-
 }
 
 
 /* ============================================================
-   05. PORTADA
+   HERO
    ============================================================ */
 
 .hero {
@@ -224,7 +201,6 @@ main {
     align-items: center;
 
     gap: 80px;
-
 }
 
 
@@ -237,7 +213,6 @@ main {
     letter-spacing: 0.12em;
 
     color: var(--b);
-
 }
 
 
@@ -258,7 +233,6 @@ h1 {
         15px
         0
         24px;
-
 }
 
 
@@ -267,7 +241,6 @@ h1 em {
     font-style: normal;
 
     color: var(--b);
-
 }
 
 
@@ -280,7 +253,6 @@ h1 em {
     line-height: 1.55;
 
     color: var(--muted);
-
 }
 
 
@@ -293,7 +265,6 @@ h1 em {
     align-items: center;
 
     margin-top: 28px;
-
 }
 
 
@@ -314,7 +285,6 @@ h1 em {
     text-decoration: none;
 
     font-weight: 850;
-
 }
 
 
@@ -325,12 +295,11 @@ h1 em {
     font-weight: 800;
 
     text-decoration: none;
-
 }
 
 
 /* ============================================================
-   06. RESUMEN
+   RESUMEN
    ============================================================ */
 
 .summary {
@@ -348,7 +317,6 @@ h1 em {
         20px
         55px
         #063e6b26;
-
 }
 
 
@@ -363,7 +331,6 @@ h1 em {
     font-size: 11px;
 
     letter-spacing: 0.08em;
-
 }
 
 
@@ -376,7 +343,6 @@ h1 em {
     margin:
         6px
         0;
-
 }
 
 
@@ -385,7 +351,6 @@ h1 em {
     display: block;
 
     margin-top: 6px;
-
 }
 
 
@@ -394,7 +359,6 @@ h1 em {
     color: #d4e4ef;
 
     line-height: 1.45;
-
 }
 
 
@@ -410,12 +374,11 @@ h1 em {
     margin:
         22px
         0;
-
 }
 
 
 /* ============================================================
-   07. TARJETAS
+   CARDS
    ============================================================ */
 
 .card {
@@ -440,12 +403,11 @@ h1 em {
         8px
         30px
         #0d29400a;
-
 }
 
 
 /* ============================================================
-   08. TÍTULOS
+   TÍTULOS
    ============================================================ */
 
 .title {
@@ -455,7 +417,6 @@ h1 em {
     gap: 16px;
 
     margin-bottom: 26px;
-
 }
 
 
@@ -469,7 +430,6 @@ h1 em {
     font-size: 12px;
 
     padding-top: 7px;
-
 }
 
 
@@ -481,7 +441,6 @@ h1 em {
         5px;
 
     font-size: 29px;
-
 }
 
 
@@ -490,12 +449,11 @@ h1 em {
     margin: 0;
 
     color: var(--muted);
-
 }
 
 
 /* ============================================================
-   09. FORMULARIOS
+   FORMULARIOS
    ============================================================ */
 
 label {
@@ -503,7 +461,6 @@ label {
     font-size: 13px;
 
     font-weight: 850;
-
 }
 
 
@@ -528,7 +485,6 @@ input {
     color: var(--ink);
 
     outline: none;
-
 }
 
 
@@ -543,7 +499,6 @@ input:focus {
         0
         3px
         #075b9c16;
-
 }
 
 
@@ -553,7 +508,6 @@ input:disabled {
     background: #f2f5f7;
 
     cursor: not-allowed;
-
 }
 
 
@@ -567,11 +521,12 @@ label small {
 
     margin-top: 6px;
 
+    line-height: 1.4;
 }
 
 
 /* ============================================================
-   10. ESTADO VACÍO
+   EMPTY
    ============================================================ */
 
 .empty-state {
@@ -590,7 +545,6 @@ label small {
         20px;
 
     background: #f9fbfc;
-
 }
 
 
@@ -602,7 +556,6 @@ label small {
         10px
         0
         5px;
-
 }
 
 
@@ -616,7 +569,6 @@ label small {
         0
         auto
         22px;
-
 }
 
 
@@ -639,17 +591,11 @@ label small {
     place-items: center;
 
     font-size: 31px;
-
-}
-
-
-.button {
-    cursor: pointer;
 }
 
 
 /* ============================================================
-   11. CARGOS
+   CARGOS
    ============================================================ */
 
 .line-item {
@@ -664,7 +610,6 @@ label small {
     margin-bottom: 15px;
 
     overflow: hidden;
-
 }
 
 
@@ -686,7 +631,6 @@ label small {
         1px
         solid
         var(--line);
-
 }
 
 
@@ -699,14 +643,11 @@ label small {
     color: #a22;
 
     font-weight: 800;
-
 }
 
 
 .line-body {
-
     padding: 18px;
-
 }
 
 
@@ -720,13 +661,13 @@ label small {
         1fr;
 
     gap: 14px;
-
 }
 
 
-/* ============================================================
-   12. RESULTADO INDIVIDUAL
-   ============================================================ */
+.quantity-disabled {
+    opacity: 0.48;
+}
+
 
 .line-result {
 
@@ -749,7 +690,6 @@ label small {
     justify-content: space-between;
 
     gap: 20px;
-
 }
 
 
@@ -758,14 +698,11 @@ label small {
     color: #9fb7c8;
 
     display: block;
-
 }
 
 
 .line-result strong {
-
     font-size: 26px;
-
 }
 
 
@@ -776,12 +713,11 @@ label small {
     color: #a9bfce;
 
     text-align: right;
-
 }
 
 
 /* ============================================================
-   13. AGREGAR CARGO
+   AGREGAR
    ============================================================ */
 
 .add-area {
@@ -795,7 +731,6 @@ label small {
     margin:
         18px
         0;
-
 }
 
 
@@ -804,7 +739,6 @@ label small {
     font-size: 12px;
 
     color: var(--muted);
-
 }
 
 
@@ -826,12 +760,11 @@ label small {
         15px;
 
     font-weight: 850;
-
 }
 
 
 /* ============================================================
-   14. SUMA SIMPLE DE CARGOS
+   TOTAL DIRECTO
    ============================================================ */
 
 .grand {
@@ -853,7 +786,6 @@ label small {
     align-items: center;
 
     gap: 25px;
-
 }
 
 
@@ -864,7 +796,6 @@ label small {
     font-weight: 800;
 
     font-size: 11px;
-
 }
 
 
@@ -877,7 +808,6 @@ label small {
     margin:
         4px
         0;
-
 }
 
 
@@ -886,7 +816,6 @@ label small {
     margin: 0;
 
     color: #c6dbe9;
-
 }
 
 
@@ -897,7 +826,6 @@ label small {
     gap: 8px;
 
     flex-wrap: wrap;
-
 }
 
 
@@ -919,12 +847,11 @@ label small {
         12px;
 
     font-weight: 750;
-
 }
 
 
 /* ============================================================
-   15. LIQUIDACIÓN CONSOLIDADA
+   CONSOLIDACIÓN
    ============================================================ */
 
 .settlement {
@@ -941,13 +868,8 @@ label small {
     overflow: hidden;
 
     background: #fff;
-
 }
 
-
-/* ============================================================
-   ENCABEZADO LIQUIDACIÓN
-   ============================================================ */
 
 .settlement-head {
 
@@ -969,7 +891,6 @@ label small {
         1px
         solid
         var(--line);
-
 }
 
 
@@ -982,7 +903,6 @@ label small {
     font-size: 11px;
 
     letter-spacing: 0.08em;
-
 }
 
 
@@ -994,7 +914,6 @@ label small {
         0;
 
     font-size: 22px;
-
 }
 
 
@@ -1012,13 +931,8 @@ label small {
     letter-spacing: -0.03em;
 
     white-space: nowrap;
-
 }
 
-
-/* ============================================================
-   MÉTRICAS
-   ============================================================ */
 
 .settlement-grid {
 
@@ -1036,7 +950,6 @@ label small {
         20px
         24px
         0;
-
 }
 
 
@@ -1052,7 +965,6 @@ label small {
     padding: 15px;
 
     background: #fbfcfd;
-
 }
 
 
@@ -1067,7 +979,6 @@ label small {
     font-weight: 850;
 
     letter-spacing: 0.06em;
-
 }
 
 
@@ -1078,13 +989,8 @@ label small {
     margin-top: 5px;
 
     font-size: 21px;
-
 }
 
-
-/* ============================================================
-   DETALLE DE TRAMOS
-   ============================================================ */
 
 .band-breakdown {
 
@@ -1092,7 +998,6 @@ label small {
         18px
         24px
         0;
-
 }
 
 
@@ -1119,43 +1024,23 @@ label small {
         #edf1f4;
 
     font-size: 13px;
-
 }
 
 
 .band-row:last-child {
-
     border-bottom: 0;
-
 }
 
 
 .band-row span {
-
     color: var(--muted);
-
-}
-
-
-.band-row b {
-
-    font-weight: 750;
-
 }
 
 
 .band-row strong {
-
     text-align: right;
-
-    font-size: 15px;
-
 }
 
-
-/* ============================================================
-   ESTADO DEL CÁLCULO
-   ============================================================ */
 
 .bands-status {
 
@@ -1169,7 +1054,6 @@ label small {
     line-height: 1.5;
 
     font-size: 12px;
-
 }
 
 
@@ -1193,19 +1077,387 @@ label small {
     font-size: 11px;
 
     line-height: 1.55;
-
-}
-
-
-.settlement-note b {
-
-    color: var(--ink);
-
 }
 
 
 /* ============================================================
-   16. COMPARACIÓN CUENTA SUELDO
+   DATOS PERSONALES
+   ============================================================ */
+
+.personal-card {
+
+    margin-top: 18px;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 14px;
+
+    padding: 24px;
+
+    background: #fbfcfd;
+}
+
+
+.subsection-title {
+    margin-bottom: 20px;
+}
+
+
+.subsection-title > span {
+
+    color: var(--b);
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 0.09em;
+}
+
+
+.subsection-title h3 {
+
+    margin:
+        5px
+        0
+        4px;
+
+    font-size: 22px;
+}
+
+
+.subsection-title p {
+
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+.personal-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 16px;
+}
+
+
+.option-box {
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    background: #fff;
+
+    border-radius: 11px;
+
+    padding: 17px;
+}
+
+
+.check-line {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    cursor: pointer;
+}
+
+
+.check-line input[type="checkbox"] {
+
+    width: 18px;
+
+    height: 18px;
+
+    padding: 0;
+
+    margin:
+        2px
+        0
+        0;
+
+    accent-color: var(--b);
+
+    flex:
+        0
+        0
+        auto;
+}
+
+
+.check-line span {
+    display: block;
+}
+
+
+.check-line b {
+    display: block;
+}
+
+
+.check-line small {
+
+    display: block;
+
+    color: var(--muted);
+
+    font-weight: 400;
+
+    margin-top: 4px;
+
+    line-height: 1.4;
+}
+
+
+.option-detail {
+
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px
+        solid
+        #edf1f4;
+}
+
+
+/* ============================================================
+   ASIGNACIONES
+   ============================================================ */
+
+.family-card {
+    background: #fff;
+}
+
+
+.family-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1.5fr
+        0.7fr
+        0.9fr
+        1fr;
+
+    gap: 14px;
+
+    align-items: start;
+}
+
+
+.family-check {
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 9px;
+
+    padding: 14px;
+
+    min-height: 76px;
+
+    margin-top: 21px;
+}
+
+
+.family-reference {
+
+    margin-top: 18px;
+
+    padding:
+        13px
+        15px;
+
+    background: #f4f8fa;
+
+    border-radius: 8px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.family-reference b {
+
+    display: block;
+
+    color: var(--ink);
+
+    margin-bottom: 3px;
+}
+
+
+/* ============================================================
+   TOTAL PERSONAL
+   ============================================================ */
+
+.personal-summary {
+
+    margin-top: 18px;
+
+    border:
+        1px
+        solid
+        var(--line);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    background: #fff;
+}
+
+
+.personal-summary-head {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding:
+        23px
+        25px;
+
+    background: #eaf2f7;
+}
+
+
+.personal-summary-head small {
+
+    color: var(--b);
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 0.08em;
+}
+
+
+.personal-summary-head h3 {
+
+    margin:
+        5px
+        0
+        0;
+
+    font-size: 22px;
+}
+
+
+.personal-summary-head > strong {
+
+    color: var(--b2);
+
+    font-size:
+        clamp(
+            30px,
+            4vw,
+            42px
+        );
+
+    white-space: nowrap;
+}
+
+
+.summary-lines {
+
+    padding:
+        15px
+        25px;
+}
+
+
+.summary-lines > div {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding:
+        10px
+        0;
+
+    border-bottom:
+        1px
+        solid
+        #edf1f4;
+}
+
+
+.summary-lines > div:last-child {
+    border-bottom: 0;
+}
+
+
+.summary-lines span {
+    color: var(--muted);
+}
+
+
+.summary-status {
+
+    padding:
+        13px
+        25px;
+
+    background: #f7f9fa;
+
+    border-top:
+        1px
+        solid
+        var(--line);
+}
+
+
+.summary-status p {
+
+    margin:
+        3px
+        0;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    line-height: 1.45;
+}
+
+
+/* ============================================================
+   CUENTA SUELDO
    ============================================================ */
 
 .bank-comparison {
@@ -1222,13 +1474,8 @@ label small {
     overflow: hidden;
 
     background: #fff;
-
 }
 
-
-/* ============================================================
-   TOTAL ESPERADO
-   ============================================================ */
 
 .bank-total {
 
@@ -1237,7 +1484,6 @@ label small {
     background: #102c43;
 
     color: #fff;
-
 }
 
 
@@ -1252,7 +1498,6 @@ label small {
     font-weight: 850;
 
     letter-spacing: 0.08em;
-
 }
 
 
@@ -1272,7 +1517,6 @@ label small {
         );
 
     letter-spacing: -0.04em;
-
 }
 
 
@@ -1283,13 +1527,8 @@ label small {
     color: #b7c9d5;
 
     font-size: 13px;
-
 }
 
-
-/* ============================================================
-   MONTO ACREDITADO
-   ============================================================ */
 
 .bank-check {
 
@@ -1302,7 +1541,6 @@ label small {
     gap: 25px;
 
     padding: 25px;
-
 }
 
 
@@ -1311,13 +1549,8 @@ label small {
     font-size: 20px;
 
     font-weight: 750;
-
 }
 
-
-/* ============================================================
-   DIFERENCIA
-   ============================================================ */
 
 .bank-difference {
 
@@ -1329,7 +1562,6 @@ label small {
     border-radius: 10px;
 
     padding: 18px;
-
 }
 
 
@@ -1342,9 +1574,6 @@ label small {
     font-size: 11px;
 
     font-weight: 850;
-
-    letter-spacing: 0.07em;
-
 }
 
 
@@ -1357,7 +1586,6 @@ label small {
         0;
 
     font-size: 28px;
-
 }
 
 
@@ -1371,46 +1599,32 @@ label small {
     font-size: 12px;
 
     color: var(--muted);
-
 }
 
-
-/* Coincidencia */
 
 .difference-ok {
 
     border-color: #65956e;
 
     background: #f7fbf7;
-
 }
 
-
-/* Recibió más */
 
 .difference-positive {
 
     border-color: #4f7fa2;
 
     background: #f7fbfd;
-
 }
 
-
-/* Recibió menos */
 
 .difference-negative {
 
     border-color: #b46b6b;
 
     background: #fff9f9;
-
 }
 
-
-/* ============================================================
-   ACLARACIÓN BANCARIA
-   ============================================================ */
 
 .bank-warning {
 
@@ -1430,12 +1644,11 @@ label small {
     font-size: 11px;
 
     line-height: 1.5;
-
 }
 
 
 /* ============================================================
-   17. COMPARADOR
+   GRÁFICO
    ============================================================ */
 
 .bars {
@@ -1451,7 +1664,6 @@ label small {
     padding-top: 20px;
 
     overflow-x: auto;
-
 }
 
 
@@ -1462,7 +1674,6 @@ label small {
     padding:
         60px
         0;
-
 }
 
 
@@ -1473,7 +1684,6 @@ label small {
     flex: 1;
 
     text-align: center;
-
 }
 
 
@@ -1490,7 +1700,6 @@ label small {
         0;
 
     min-height: 3px;
-
 }
 
 
@@ -1501,7 +1710,6 @@ label small {
     font-size: 10px;
 
     margin-top: 7px;
-
 }
 
 
@@ -1510,12 +1718,11 @@ label small {
     color: var(--muted);
 
     font-size: 10px;
-
 }
 
 
 /* ============================================================
-   18. HERRAMIENTAS
+   HERRAMIENTAS
    ============================================================ */
 
 .tools {
@@ -1527,7 +1734,6 @@ label small {
     flex-wrap: wrap;
 
     margin-bottom: 15px;
-
 }
 
 
@@ -1536,7 +1742,6 @@ label small {
     max-width: 520px;
 
     margin: 0;
-
 }
 
 
@@ -1556,12 +1761,11 @@ label small {
         14px;
 
     font-weight: 750;
-
 }
 
 
 /* ============================================================
-   19. TABLA SALARIAL
+   TABLA
    ============================================================ */
 
 .table {
@@ -1574,7 +1778,6 @@ label small {
         var(--line);
 
     border-radius: 9px;
-
 }
 
 
@@ -1587,7 +1790,6 @@ table {
     font-size: 12px;
 
     white-space: nowrap;
-
 }
 
 
@@ -1606,7 +1808,6 @@ th {
     top: 0;
 
     z-index: 1;
-
 }
 
 
@@ -1620,14 +1821,11 @@ td:first-child {
     left: 0;
 
     z-index: 2;
-
 }
 
 
 th:first-child {
-
     z-index: 3;
-
 }
 
 
@@ -1645,26 +1843,21 @@ td {
     text-align: right;
 
     background: #fff;
-
 }
 
 
 tbody tr:nth-child(even) td {
-
     background: #fafcfd;
-
 }
 
 
 tbody tr:hover td {
-
     background: #eef6fb;
-
 }
 
 
 /* ============================================================
-   20. REFERENCIAS
+   REFERENCIAS
    ============================================================ */
 
 .refs {
@@ -1680,7 +1873,6 @@ tbody tr:hover td {
     gap: 18px;
 
     margin-top: 28px;
-
 }
 
 
@@ -1696,7 +1888,6 @@ tbody tr:hover td {
     border-radius: 14px;
 
     padding: 24px;
-
 }
 
 
@@ -1705,7 +1896,6 @@ tbody tr:hover td {
     margin:
         8px
         0;
-
 }
 
 
@@ -1715,43 +1905,11 @@ tbody tr:hover td {
     color: var(--muted);
 
     line-height: 1.55;
-
-}
-
-
-.refs a {
-
-    color: var(--b);
-
-    font-weight: 800;
-
-    text-decoration: none;
-
-}
-
-
-.source-links {
-
-    display: flex;
-
-    gap: 12px;
-
-    flex-wrap: wrap;
-
-    margin-top: 12px;
-
-}
-
-
-.source-links a {
-
-    font-size: 12px;
-
 }
 
 
 /* ============================================================
-   21. METODOLOGÍA
+   METODOLOGÍA
    ============================================================ */
 
 .method {
@@ -1762,26 +1920,21 @@ tbody tr:hover td {
         15px;
 
     max-width: 900px;
-
 }
 
 
 .method h2 {
-
     font-size: 30px;
-
 }
 
 
 .updated {
-
     font-size: 13px;
-
 }
 
 
 /* ============================================================
-   22. PIE DE PÁGINA
+   FOOTER
    ============================================================ */
 
 footer {
@@ -1799,7 +1952,6 @@ footer {
     justify-content: space-between;
 
     gap: 30px;
-
 }
 
 
@@ -1808,7 +1960,6 @@ footer div:first-child {
     display: flex;
 
     flex-direction: column;
-
 }
 
 
@@ -1817,35 +1968,27 @@ footer small {
     color: #9db3c3;
 
     margin-top: 4px;
-
 }
 
 
 /* ============================================================
-   23. RESPONSIVE
+   RESPONSIVE
    ============================================================ */
 
 @media (max-width: 850px) {
 
-
     header {
-
         height: 72px;
-
     }
 
 
     nav {
-
         display: none;
-
     }
 
 
     .head small {
-
         display: none;
-
     }
 
 
@@ -1859,28 +2002,21 @@ footer small {
         padding:
             55px
             0;
-
     }
 
 
     .summary {
-
         margin-top: 30px;
-
     }
 
 
     h1 {
-
         font-size: 55px;
-
     }
 
 
     .card {
-
         padding: 21px;
-
     }
 
 
@@ -1889,37 +2025,41 @@ footer small {
     .grand,
     .add-area,
     .settlement-head,
+    .personal-summary-head,
     footer {
 
         align-items: flex-start;
 
         flex-direction: column;
-
     }
 
 
     .line-grid,
     .settlement-grid,
+    .personal-grid,
+    .family-grid,
     .bank-check,
     .refs {
 
         grid-template-columns:
             1fr;
+    }
 
+
+    .family-check {
+        margin-top: 0;
     }
 
 
     .line-meta {
-
         text-align: left;
-
     }
 
 
-    .settlement-head > strong {
+    .settlement-head > strong,
+    .personal-summary-head > strong {
 
         white-space: normal;
-
     }
 
 
@@ -1929,39 +2069,40 @@ footer small {
             1fr;
 
         gap: 4px;
-
     }
 
 
     .band-row strong {
-
         text-align: left;
+    }
 
+
+    .summary-lines > div {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 4px;
     }
 
 
     .bars {
-
         height: 230px;
-
     }
 
 
     .tools button {
-
         min-height: 44px;
-
     }
-
 }
 
 
 /* ============================================================
-   24. IMPRESIÓN / PDF
+   IMPRESIÓN
    ============================================================ */
 
 @media print {
-
 
     header,
     .hero,
@@ -1974,14 +2115,11 @@ footer small {
     footer {
 
         display: none !important;
-
     }
 
 
     body {
-
         background: #fff;
-
     }
 
 
@@ -1989,7 +2127,6 @@ footer small {
     .refs article {
 
         box-shadow: none;
-
     }
 
 
@@ -1998,21 +2135,16 @@ footer small {
         border: 0;
 
         padding: 0;
-
     }
 
 
     .table {
-
         overflow: visible;
-
     }
 
 
     table {
-
         font-size: 8px;
-
     }
 
 
@@ -2021,7 +2153,5 @@ footer small {
         max-width: none;
 
         padding: 0;
-
     }
-
 }

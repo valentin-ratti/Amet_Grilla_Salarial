@@ -11,12 +11,12 @@
     >
 
     <title>
-        AMET Regional 1 · Calculadora Salarial · Agosto 2026
+        AMET Regional 1 · Calculadora Salarial
     </title>
 
     <meta
         name="description"
-        content="Calculadora y grilla salarial de referencia para AMET Regional 1 CABA, agosto de 2026."
+        content="Calculadora y grilla salarial de referencia para AMET Regional 1 CABA."
     >
 
     <link
@@ -93,8 +93,11 @@
 
             <div>
 
-                <div class="tag">
-                    AMET REGIONAL 1 · CABA · AGOSTO 2026
+                <div
+                    id="heroPeriodTag"
+                    class="tag"
+                >
+                    AMET REGIONAL 1 · CABA
                 </div>
 
 
@@ -111,13 +114,11 @@
 
                 <p>
 
-                    Consultá la grilla, combiná más de un cargo
-                    y obtené una estimación del total a cobrar.
-
-                    Para cargos expresados en horas cátedra,
-                    la herramienta consolida la carga horaria
-                    y aplica los valores diferenciados
-                    publicados en la grilla.
+                    Consultá la grilla salarial vigente,
+                    combiná más de un cargo,
+                    consolidá horas cátedra y compará
+                    la estimación con lo efectivamente
+                    acreditado en tu cuenta sueldo.
 
                 </p>
 
@@ -148,28 +149,31 @@
             <aside class="summary">
 
                 <small>
-                    VALOR ÍNDICE
+                    PERÍODO
                 </small>
 
-                <strong>
-                    $ 291,09
+                <strong
+                    id="heroPeriod"
+                    class="summary-period"
+                >
+                    —
                 </strong>
 
 
-                <b>
-                    Agosto 2026
-                </b>
+                <small>
+                    VALOR ÍNDICE
+                </small>
 
-                <span>
-                    CABA
-                </span>
+                <strong id="heroIndexValue">
+                    —
+                </strong>
 
 
                 <hr>
 
 
                 <small>
-                    TRAMOS HORARIOS USADOS
+                    TRAMOS HORARIOS
                 </small>
 
                 <b>
@@ -181,13 +185,15 @@
 
 
                 <small>
-                    IMPORTANTE
+                    INCLUYE
                 </small>
 
                 <span>
 
-                    La herramienta es orientativa
-                    y no reemplaza la liquidación oficial.
+                    Presentismo,
+                    asignaciones familiares,
+                    afiliación AMET
+                    y comparación bancaria.
 
                 </span>
 
@@ -198,7 +204,7 @@
 
 
         <!-- =================================================
-             CALCULADORA MULTICARGO
+             CALCULADORA
              ================================================= -->
 
         <section
@@ -222,12 +228,69 @@
 
                     <p>
 
-                        Podés agregar el mismo cargo más de una vez
-                        y combinar cargos con horas cátedra.
+                        Seleccioná el período salarial
+                        y agregá todos los cargos necesarios.
 
                     </p>
 
                 </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 SELECTOR DE PERÍODO
+                 ============================================= -->
+
+            <div class="period-panel">
+
+
+                <div class="period-field">
+
+                    <label for="periodSelect">
+
+                        Período salarial
+
+
+                        <select id="periodSelect">
+
+                            <option value="">
+                                Cargando períodos...
+                            </option>
+
+                        </select>
+
+
+                        <small>
+
+                            Podés consultar grillas anteriores
+                            cuando estén disponibles.
+
+                        </small>
+
+                    </label>
+
+                </div>
+
+
+
+                <div class="period-info">
+
+                    <small>
+                        GRILLA SELECCIONADA
+                    </small>
+
+                    <strong id="selectedPeriodLabel">
+                        —
+                    </strong>
+
+                    <span id="periodStatus">
+                        Cargando datos...
+                    </span>
+
+                </div>
+
 
             </div>
 
@@ -254,10 +317,8 @@
 
                 <p>
 
-                    La calculadora comienza vacía para evitar
-                    resultados preseleccionados.
-
-                    Podés agregar todos los cargos que necesites.
+                    La calculadora comienza vacía
+                    para evitar resultados preseleccionados.
 
                 </p>
 
@@ -302,8 +363,8 @@
 
                 <span>
 
-                    Podés repetir un cargo,
-                    por ejemplo dos TC de 36 horas.
+                    Podés repetir cargos;
+                    por ejemplo, dos TC de 36 horas.
 
                 </span>
 
@@ -312,7 +373,7 @@
 
 
             <!-- =============================================
-                 SUMA SIMPLE SEGÚN GRILLA
+                 SUMA DIRECTA
                  ============================================= -->
 
             <div
@@ -320,23 +381,19 @@
                 class="grand hidden"
             >
 
-
                 <div>
 
                     <small>
                         SUMA INDIVIDUAL SEGÚN GRILLA
                     </small>
 
-
                     <strong id="grandTotal">
                         $ 0,00
                     </strong>
 
-
                     <p id="grandDesc"></p>
 
                 </div>
-
 
 
                 <div class="grand-actions">
@@ -358,14 +415,13 @@
 
                 </div>
 
-
             </div>
 
 
 
-            <!-- =================================================
-                 TOTAL ESTIMADO CON TOPES
-                 ================================================= -->
+            <!-- =============================================
+                 CONSOLIDACIÓN DE HORAS
+                 ============================================= -->
 
             <div
                 id="settlement"
@@ -374,7 +430,6 @@
 
 
                 <div class="settlement-head">
-
 
                     <div>
 
@@ -437,32 +492,19 @@
                 ></div>
 
 
-
                 <p
                     id="bandsStatus"
                     class="bands-status"
                 ></p>
 
 
-
                 <div class="settlement-note">
 
-                    <b>
-                        Cómo se calcula:
-                    </b>
+                    Los cargos con equivalencia horaria explícita
+                    se consolidan por persona.
 
-                    para los cargos que pueden expresarse
-                    directamente en horas cátedra,
-                    se consolidan las horas de la persona.
-
-                    Las primeras 30 se valorizan con la fila
-                    “HS CÁTEDRA”, las horas 31 a 40 con
-                    “HS CÁTEDRA &gt;30” y las superiores a 40
-                    con “HS CÁTEDRA &gt;40”.
-
-                    Los cargos que no tienen una equivalencia
-                    horaria explícita se suman según el valor
-                    publicado en la grilla.
+                    La herramienta utiliza las filas diferenciadas
+                    de horas cátedra de la grilla seleccionada.
 
                 </div>
 
@@ -471,9 +513,402 @@
 
 
 
-            <!-- =================================================
-                 COMPARACIÓN CON CUENTA SUELDO
-                 ================================================= -->
+            <!-- =============================================
+                 PRESENTISMO Y AFILIACIÓN
+                 ============================================= -->
+
+            <div class="personal-card">
+
+
+                <div class="subsection-title">
+
+                    <span>
+                        DATOS PERSONALES DE LA LIQUIDACIÓN
+                    </span>
+
+                    <h3>
+                        Presentismo y afiliación
+                    </h3>
+
+                    <p>
+
+                        Permiten aproximar el resultado
+                        a la liquidación individual.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="personal-grid">
+
+
+                    <!-- PRESENTISMO -->
+
+                    <div class="option-box">
+
+                        <label class="check-line">
+
+                            <input
+                                id="presentismEnabled"
+                                type="checkbox"
+                                checked
+                            >
+
+                            <span>
+
+                                <b>
+                                    Presentismo
+                                </b>
+
+                                <small>
+                                    Marcado significa que corresponde percibirlo.
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+
+                        <div
+                            id="presentismOptions"
+                            class="option-detail"
+                        >
+
+                            <label>
+
+                                Porcentaje percibido
+
+
+                                <select id="presentismLevel">
+
+                                    <!--
+                                    Se completa automáticamente
+                                    desde data/rules.js
+                                    -->
+
+                                </select>
+
+
+                                <small>
+
+                                    Los porcentajes se leen
+                                    desde las reglas generales.
+
+                                </small>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- AFILIACIÓN AMET -->
+
+                    <div class="option-box">
+
+                        <label class="check-line">
+
+                            <input
+                                id="ametAffiliate"
+                                type="checkbox"
+                            >
+
+                            <span>
+
+                                <b>
+                                    Afiliado/a a AMET
+                                </b>
+
+                                <small>
+
+                                    Si la regla de cuota sindical
+                                    está configurada,
+                                    el descuento se aplica automáticamente.
+
+                                </small>
+
+                            </span>
+
+                        </label>
+
+
+                        <div
+                            id="unionInfo"
+                            class="option-detail hidden"
+                        >
+
+                            <p
+                                id="unionRuleStatus"
+                                class="rule-status"
+                            ></p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =============================================
+                 ASIGNACIONES FAMILIARES
+                 ============================================= -->
+
+            <div class="personal-card family-card">
+
+
+                <div class="subsection-title">
+
+                    <span>
+                        ASIGNACIONES FAMILIARES
+                    </span>
+
+                    <h3>
+                        Situación familiar
+                    </h3>
+
+                    <p>
+
+                        Podés estimar asignaciones mensuales
+                        según el rango de ingreso individual.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="family-grid">
+
+
+                    <label>
+
+                        Ingreso computable mensual
+
+
+                        <input
+                            id="familyIncome"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Ingresar remuneración computable"
+                        >
+
+
+                        <small>
+
+                            Se utiliza para determinar
+                            el rango correspondiente.
+
+                        </small>
+
+                    </label>
+
+
+
+                    <label>
+
+                        Hijos/as
+
+
+                        <input
+                            id="childrenCount"
+                            type="number"
+                            min="0"
+                            max="20"
+                            value="0"
+                        >
+
+                    </label>
+
+
+
+                    <label>
+
+                        Hijos/as con discapacidad
+
+
+                        <input
+                            id="disabledChildrenCount"
+                            type="number"
+                            min="0"
+                            max="20"
+                            value="0"
+                        >
+
+                    </label>
+
+
+
+                    <label class="check-line family-check">
+
+                        <input
+                            id="spouseAllowance"
+                            type="checkbox"
+                        >
+
+                        <span>
+
+                            <b>
+                                Cónyuge o conviviente
+                            </b>
+
+                            <small>
+
+                                Marcá solo si corresponde
+                                percibir la asignación.
+
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+
+
+                <div class="family-reference">
+
+                    <b id="familyPeriodLabel">
+                        Período de asignaciones: —
+                    </b>
+
+                    <span>
+
+                        Los importes y topes
+                        se leen desde data/rules.js.
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =============================================
+                 TOTAL PERSONALIZADO
+                 ============================================= -->
+
+            <div
+                id="personalSummary"
+                class="personal-summary hidden"
+            >
+
+
+                <div class="personal-summary-head">
+
+                    <div>
+
+                        <small>
+                            LIQUIDACIÓN PERSONALIZADA
+                        </small>
+
+                        <h3>
+                            Total estimado final
+                        </h3>
+
+                    </div>
+
+
+                    <strong id="finalAccountTotal">
+                        $ 0,00
+                    </strong>
+
+                </div>
+
+
+
+                <div class="summary-lines">
+
+
+                    <div>
+
+                        <span>
+                            Presentismo completo de referencia
+                        </span>
+
+                        <b id="presentismFullNet">
+                            $ 0,00
+                        </b>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Ajuste por presentismo
+                        </span>
+
+                        <b id="presentismAdjustment">
+                            $ 0,00
+                        </b>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Asignaciones familiares
+                        </span>
+
+                        <b id="familyTotal">
+                            $ 0,00
+                        </b>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <span>
+                            Cuota sindical AMET
+                        </span>
+
+                        <b id="unionDeduction">
+                            $ 0,00
+                        </b>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="summary-status">
+
+                    <p id="familyStatus"></p>
+
+                    <p id="unionStatus"></p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =============================================
+                 CUENTA SUELDO
+                 ============================================= -->
 
             <div
                 id="bankComparison"
@@ -487,17 +922,12 @@
                         TOTAL ESTIMADO A RECIBIR EN CUENTA SUELDO
                     </small>
 
-
                     <strong id="bankExpected">
                         $ 0,00
                     </strong>
 
-
                     <p>
-
-                        Este es el valor de referencia
-                        que conviene comparar con la acreditación real.
-
+                        Comparalo con la acreditación real.
                     </p>
 
                 </div>
@@ -506,10 +936,9 @@
 
                 <div class="bank-check">
 
-
                     <label for="bankAmount">
 
-                        ¿Cuánto recibiste realmente en tu cuenta?
+                        ¿Cuánto recibiste realmente?
 
 
                         <input
@@ -524,10 +953,8 @@
 
                         <small>
 
-                            Campo opcional.
-
-                            No se guarda ni se envía
-                            a ningún servidor.
+                            Este dato queda solamente
+                            en tu navegador.
 
                         </small>
 
@@ -544,11 +971,9 @@
                             DIFERENCIA
                         </small>
 
-
                         <strong id="bankDifference">
                             $ 0,00
                         </strong>
-
 
                         <p id="bankStatus"></p>
 
@@ -561,12 +986,9 @@
 
                 <div class="bank-warning">
 
-                    El importe acreditado puede diferir por
-                    descuentos personales, afiliación sindical,
-                    embargos, préstamos, inasistencias,
-                    presentismo, asignaciones,
-                    impuesto a los ingresos u otros conceptos
-                    que no están incluidos en esta grilla.
+                    La liquidación real puede variar
+                    por otros conceptos personales
+                    no incluidos en esta herramienta.
 
                 </div>
 
@@ -594,7 +1016,6 @@
                     02
                 </span>
 
-
                 <div>
 
                     <h2>
@@ -603,9 +1024,8 @@
 
                     <p>
 
-                        Al seleccionar un cargo en la calculadora
-                        se muestra su evolución de bolsillo
-                        según antigüedad.
+                        Al seleccionar un cargo
+                        se muestra su evolución salarial.
 
                     </p>
 
@@ -625,7 +1045,7 @@
 
 
         <!-- =================================================
-             GRILLA COMPLETA
+             GRILLA
              ================================================= -->
 
         <section
@@ -640,18 +1060,14 @@
                     03
                 </span>
 
-
                 <div>
 
                     <h2>
                         Grilla salarial completa
                     </h2>
 
-                    <p>
-
-                        Valores cargados a partir
-                        de la grilla de agosto de 2026.
-
+                    <p id="gridPeriodDescription">
+                        Período: —
                     </p>
 
                 </div>
@@ -661,7 +1077,6 @@
 
 
             <div class="tools">
-
 
                 <input
                     id="search"
@@ -684,7 +1099,6 @@
                 >
                     Imprimir / PDF
                 </button>
-
 
             </div>
 
@@ -724,21 +1138,14 @@
                 </span>
 
                 <h3>
-                    Descuentos de referencia
+                    Descuentos generales
                 </h3>
 
+                <div id="discountsList">
 
-                <p>
+                    Cargando...
 
-                    Obra social: 3 %<br>
-
-                    Caja complementaria: 4,5 %<br>
-
-                    Jubilación: 11 %<br>
-
-                    Aporte jubilatorio suplementario docente: 2 %
-
-                </p>
+                </div>
 
             </article>
 
@@ -751,23 +1158,14 @@
                 </span>
 
                 <h3>
-                    Garantías de la grilla
+                    Garantías del período
                 </h3>
 
+                <div id="guaranteesList">
 
-                <p>
+                    Cargando...
 
-                    MEP: $ 1.039.716<br>
-
-                    Preceptor: $ 872.079<br>
-
-                    MAEP: $ 945.363<br>
-
-                    Hora cátedra: $ 51.986<br>
-
-                    Tope informado: $ 2.079.432
-
-                </p>
+                </div>
 
             </article>
 
@@ -780,22 +1178,14 @@
                 </span>
 
                 <h3>
-                    Topes horarios
+                    Fuente
                 </h3>
 
+                <div id="sourceInfo">
 
-                <p>
+                    Cargando...
 
-                    La normativa salarial contiene conceptos
-                    con topes por persona en 30, 38 y 40
-                    horas cátedra.
-
-                    La calculadora utiliza las tres filas
-                    marginales publicadas en la grilla AMET
-                    para estimar el efecto acumulado
-                    de las horas.
-
-                </p>
+                </div>
 
             </article>
 
@@ -808,53 +1198,18 @@
                 </span>
 
                 <h3>
-                    Fuentes
+                    Actualización
                 </h3>
-
 
                 <p>
 
-                    Grilla salarial AMET Regional 1 CABA
-                    · Agosto 2026.
+                    Cada grilla salarial se conserva
+                    como un período independiente.
 
-                    <br>
-
-                    Acta Salarial 02/2026 del GCBA y referencias
-                    salariales docentes publicadas
-                    para junio/agosto de 2026.
+                    Esto permite mantener un histórico
+                    sin perder los meses anteriores.
 
                 </p>
-
-
-                <div class="source-links">
-
-                    <a
-                        href="https://www.ametregional1.org.ar/"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        AMET Regional 1
-                    </a>
-
-
-                    <a
-                        href="https://documentosboletinoficial.buenosaires.gob.ar/publico/PE-RES-MEDGC-SSPIE-5147-26-ANX-1.pdf"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        Acta salarial GCBA
-                    </a>
-
-
-                    <a
-                        href="https://ute.org.ar/mesa-salarial-junio-2026/"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        Referencia junio/agosto 2026
-                    </a>
-
-                </div>
 
             </article>
 
@@ -869,6 +1224,7 @@
 
         <section class="method">
 
+
             <h2>
                 Acerca del cálculo
             </h2>
@@ -876,37 +1232,31 @@
 
             <p>
 
-                La columna de bolsillo de la grilla comienza
-                en 1 año de antigüedad.
+                Los valores salariales provienen
+                del archivo correspondiente al período seleccionado.
 
-                El valor anterior a esas columnas corresponde
-                al sueldo básico con jerarquía directiva
-                cuando corresponde, por lo que no se utiliza
-                como “0 años” en la calculadora.
+                Las reglas generales de cálculo
+                están separadas en
+                <code>data/rules.js</code>.
 
             </p>
 
 
             <p>
 
-                Para profesor TP4, TP3, TP2, TP1, TC
-                y horas cátedra, la herramienta conoce su
-                equivalencia horaria y puede consolidar
-                varios cargos.
+                De esta manera, cuando aparezca una nueva grilla,
+                no será necesario modificar toda la calculadora.
 
-                Para los demás cargos no se inventan equivalencias
-                ni reglas de tercer cargo: se conserva el valor
-                publicado en la grilla y se informa que
-                el resultado es estimativo.
+                Bastará con agregar un nuevo archivo mensual.
 
             </p>
 
 
-            <p class="updated">
-
-                Período de referencia:
-                agosto de 2026.
-
+            <p
+                id="methodPeriod"
+                class="updated"
+            >
+                Período seleccionado: —
             </p>
 
 
@@ -923,7 +1273,6 @@
 
     <footer>
 
-
         <div>
 
             <b>
@@ -938,25 +1287,43 @@
         </div>
 
 
-
         <div>
 
             <small>
-                Av. Rivadavia 3846 · 1.º Piso · CABA
+                Av. Rivadavia 3846
+                · 1.º Piso
+                · CABA
             </small>
 
         </div>
-
 
     </footer>
 
 
 
     <!-- =====================================================
-         JAVASCRIPT
+         ARCHIVOS DE CONFIGURACIÓN
          ===================================================== -->
 
-    <script src="data.js"></script>
+    <script src="data/periods.js"></script>
+
+    <script src="data/rules.js"></script>
+
+
+
+    <!-- =====================================================
+         MOTOR DE LA CALCULADORA
+
+         IMPORTANTE:
+
+         Ya NO cargamos:
+
+         data.js
+
+         El app.js cargará automáticamente
+         el archivo mensual correspondiente.
+
+         ===================================================== -->
 
     <script src="app.js"></script>
 

@@ -1,105 +1,198 @@
-// ============================================================
-// DATOS GENERALES
-// ============================================================
-
-const D = window.SALARY_DATA;
-
-const A = window.AGES;
-
-const META = window.SALARY_META;
-
-const HOURS = window.HOURS_EQUIVALENT;
-
-const BANDS = window.HOUR_BANDS;
+/* ============================================================
+   AMET REGIONAL 1 - CALCULADORA SALARIAL
+   Sistema multiperíodo
+   ============================================================ */
 
 
-// ============================================================
-// FUNCIONES GENERALES
-// ============================================================
+/* ============================================================
+   CONFIGURACIÓN GLOBAL
+   ============================================================ */
+
+const PERIODS =
+    window.AMET_PERIODS || [];
+
+
+const DEFAULT_PERIOD =
+    window.AMET_DEFAULT_PERIOD || '';
+
+
+const RULES =
+    window.AMET_RULES || {};
+
+
+
+/* ============================================================
+   PERÍODO ACTUAL
+   ============================================================ */
+
+let currentPeriodId =
+    null;
+
+
+let currentPeriod =
+    null;
+
+
+/*
+ * Datos salariales del período seleccionado.
+ */
+
+let D =
+    [];
+
+
+/*
+ * Antigüedades disponibles.
+ */
+
+let A =
+    [];
+
+
+
+/* ============================================================
+   ESTADO DE LA CALCULADORA
+   ============================================================ */
+
+let items =
+    [];
+
+
+let seq =
+    0;
+
+
+let lastSelectedCargoCode =
+    null;
+
+
+
+/* ============================================================
+   FUNCIONES GENERALES
+   ============================================================ */
 
 const $ = (selector) =>
     document.querySelector(selector);
 
 
+
 const fmt = (number) =>
+
     new Intl.NumberFormat(
         'es-AR',
         {
-            style: 'currency',
-            currency: 'ARS',
-            maximumFractionDigits: 2
+            style:
+                'currency',
+
+            currency:
+                'ARS',
+
+            maximumFractionDigits:
+                2
         }
-    ).format(number || 0);
+    )
+
+    .format(
+        Number(number) || 0
+    );
+
 
 
 const compact = (number) =>
+
     new Intl.NumberFormat(
         'es-AR',
         {
-            notation: 'compact',
-            maximumFractionDigits: 1
+            notation:
+                'compact',
+
+            maximumFractionDigits:
+                1
         }
-    ).format(number || 0);
+    )
+
+    .format(
+        Number(number) || 0
+    );
 
 
-// ============================================================
-// ESTADO DE LA CALCULADORA
-// ============================================================
 
-let items = [];
-
-let seq = 0;
-
-let last = null;
-
-
-// ============================================================
-// BUSCAR UNA FILA POR CÓDIGO
-// ============================================================
+/* ============================================================
+   BUSCAR CARGO
+   ============================================================ */
 
 function getRowByCode(code) {
 
-    return D.find(
-        (row) => row.code === code
+    return (
+
+        D.find(
+            (row) =>
+                row.code === code
+        )
+
+        ||
+
+        null
+
     );
 
 }
 
 
-// ============================================================
-// POSICIÓN DEL VALOR DE ANTIGÜEDAD
-// ============================================================
-//
-// pocket[0] NO es bolsillo.
-//
-// pocket[0] corresponde a:
-// Sueldo con jerarquía.
-//
-// Por eso:
-// 1 año  -> pocket[1]
-// 4 años -> pocket[2]
-// etc.
-//
-// ============================================================
+
+/* ============================================================
+   BUSCAR PERÍODO
+   ============================================================ */
+
+function getPeriodDescriptor(id) {
+
+    return (
+
+        PERIODS.find(
+            (period) =>
+                period.id === id
+        )
+
+        ||
+
+        null
+
+    );
+
+}
+
+
+
+/* ============================================================
+   POSICIÓN DE ANTIGÜEDAD
+   ============================================================ */
 
 function pocketIndex(age) {
 
     const position =
+
         A.indexOf(
             Number(age)
         );
 
 
     return position === -1
-        ? -1
-        : position + 1;
+
+        ?
+
+        -1
+
+        :
+
+        position + 1;
 
 }
 
 
-// ============================================================
-// OBTENER SUELDO DE BOLSILLO
-// ============================================================
+
+/* ============================================================
+   VALOR DE BOLSILLO
+   ============================================================ */
 
 function pocketValue(
     row,
@@ -112,156 +205,180 @@ function pocketValue(
 
 
     const index =
+
         pocketIndex(age);
 
 
-    if (index < 1) {
+    if (
+        index < 1
+    ) {
+
         return 0;
+
     }
 
 
     return Number(
-        row.pocket[index] || 0
+        row.pocket?.[index] || 0
     );
 
 }
 
 
-// ============================================================
-// IDENTIFICAR FILAS INTERNAS DE TOPES
-// ============================================================
+
+/* ============================================================
+   CÓDIGOS INTERNOS DE TRAMOS
+   ============================================================ */
+
+function hiddenBandCodes() {
+
+    return (
+
+        RULES.hourBands
+            ?.hiddenCodes
+
+        ||
+
+        []
+
+    );
+
+}
+
+
+
+/* ============================================================
+   FILAS INTERNAS
+   ============================================================ */
 
 function isBandOnly(row) {
 
-    return (
-        row &&
-        BANDS.bandOnlyCodes.includes(
-            row.code
-        )
+    return Boolean(
+
+        row
+
+        &&
+
+        hiddenBandCodes()
+            .includes(
+                row.code
+            )
+
     );
 
 }
 
 
-// ============================================================
-// IDENTIFICAR HORA CÁTEDRA VARIABLE
-// ============================================================
+
+/* ============================================================
+   EQUIVALENCIA HORARIA
+   ============================================================ */
+
+function getHourEquivalence(row) {
+
+    if (!row) {
+        return null;
+    }
+
+
+    return (
+
+        RULES.hourEquivalences
+            ?.[row.code]
+
+        ||
+
+        null
+
+    );
+
+}
+
+
+
+/* ============================================================
+   ¿ES CARGO HORARIO?
+   ============================================================ */
+
+function isHourBased(row) {
+
+    return Boolean(
+        getHourEquivalence(row)
+    );
+
+}
+
+
+
+/* ============================================================
+   ¿ES HORA CÁTEDRA VARIABLE?
+   ============================================================ */
 
 function isVariableHour(row) {
 
     return (
-        row &&
-        row.code === BANDS.regular
+
+        getHourEquivalence(row)
+            ?.type
+
+        ===
+
+        'variable'
+
     );
 
 }
 
 
-// ============================================================
-// IDENTIFICAR CARGOS CON EQUIVALENCIA HORARIA
-// ============================================================
 
-function isHourBased(row) {
-
-    return (
-        row &&
-        Object.prototype.hasOwnProperty.call(
-            HOURS,
-            row.code
-        )
-    );
-
-}
-
-
-// ============================================================
-// HORAS EQUIVALENTES DE UN CARGO
-// ============================================================
-
-function equivalentHours(item) {
-
-    if (!valid(item)) {
-        return 0;
-    }
-
-
-    const row =
-        D[
-            Number(item.cargo)
-        ];
-
-
-    if (!isHourBased(row)) {
-        return 0;
-    }
-
-
-    // Hora cátedra común:
-    // la cantidad la ingresa el usuario.
-
-    if (isVariableHour(row)) {
-
-        return Math.max(
-            1,
-            Number(item.qty) || 1
-        );
-
-    }
-
-
-    // Profesor TP / TC:
-    // toma las horas fijas del cargo.
-
-    return (
-        HOURS[row.code] || 0
-    );
-
-}
-
-
-// ============================================================
-// OPCIONES DE CARGOS
-// ============================================================
+/* ============================================================
+   OPCIONES DE CARGOS
+   ============================================================ */
 
 function cargoOptions(
-    selected = ''
+    selectedCode = ''
 ) {
 
     const options =
-        D
-            .map(
-                (row, index) => ({
-                    row,
-                    index
-                })
-            )
 
-            // HS >30 y HS >40
-            // se usan internamente.
+        D
+
             .filter(
-                ({ row }) =>
+                (row) =>
                     !isBandOnly(row)
             )
 
             .map(
-                ({ row, index }) => {
+                (row) => {
 
-                    const isSelected =
-                        String(index) ===
-                        String(selected)
-                            ? 'selected'
-                            : '';
+
+                    const selected =
+
+                        row.code ===
+                        selectedCode
+
+                            ?
+
+                            'selected'
+
+                            :
+
+                            '';
 
 
                     return `
+
                         <option
-                            value="${index}"
-                            ${isSelected}
+                            value="${row.code}"
+                            ${selected}
                         >
+
                             ${row.code}
                             ·
                             ${row.name}
+
                         </option>
+
                     `;
 
                 }
@@ -271,91 +388,139 @@ function cargoOptions(
 
 
     return `
+
         <option value="">
             — Seleccionar cargo —
         </option>
 
         ${options}
+
     `;
 
 }
 
 
-// ============================================================
-// OPCIONES DE ANTIGÜEDAD
-// ============================================================
+
+/* ============================================================
+   OPCIONES DE ANTIGÜEDAD
+   ============================================================ */
 
 function ageOptions(
     selected = ''
 ) {
 
-    return (
+    const agePercent =
 
-        `
-            <option value="">
-                — Seleccionar antigüedad —
-            </option>
-        `
+        currentPeriod
+            ?.agePercent
 
-        +
+        ||
+
+        {};
+
+
+    const options =
 
         A
+
             .map(
                 (age) => {
 
-                    const isSelected =
-                        String(age) ===
+
+                    const selectedAttr =
+
+                        String(age)
+                        ===
                         String(selected)
-                            ? 'selected'
-                            : '';
+
+                            ?
+
+                            'selected'
+
+                            :
+
+                            '';
 
 
                     const percent =
-                        META.agePercent[age];
+
+                        agePercent[age];
 
 
-                    const label =
-                        `${age} año${
-                            age === 1
-                                ? ''
-                                : 's'
-                        } · ${percent}%`;
+                    const percentLabel =
+
+                        percent !== undefined
+
+                            ?
+
+                            ` · ${percent}%`
+
+                            :
+
+                            '';
 
 
                     return `
+
                         <option
                             value="${age}"
-                            ${isSelected}
+                            ${selectedAttr}
                         >
-                            ${label}
+
+                            ${age}
+                            año${age === 1 ? '' : 's'}
+                            ${percentLabel}
+
                         </option>
+
                     `;
 
                 }
             )
 
-            .join('')
+            .join('');
 
-    );
+
+    return `
+
+        <option value="">
+            — Seleccionar antigüedad —
+        </option>
+
+        ${options}
+
+    `;
 
 }
 
 
-// ============================================================
-// AGREGAR CARGO
-// ============================================================
 
-function add() {
+/* ============================================================
+   AGREGAR CARGO
+   ============================================================ */
+
+function addItem() {
+
+    if (!currentPeriod) {
+        return;
+    }
+
 
     items.push(
         {
-            id: ++seq,
 
-            cargo: '',
+            id:
+                ++seq,
 
-            age: '',
+            cargoCode:
+                '',
 
-            qty: 1
+            age:
+                '',
+
+            qty:
+                1
+
         }
     );
 
@@ -363,37 +528,52 @@ function add() {
     render();
 
 
-    setTimeout(
+    requestAnimationFrame(
         () => {
 
+
             const select =
+
                 document.querySelector(
-                    `[data-id="${seq}"] select`
+                    `[data-id="${seq}"] .cargo-select`
                 );
 
 
             if (select) {
+
                 select.focus();
+
             }
 
-        },
-        10
+        }
     );
 
 }
 
 
-// ============================================================
-// ELIMINAR CARGO
-// ============================================================
 
-function remove(id) {
+/* ============================================================
+   ELIMINAR CARGO
+   ============================================================ */
+
+function removeItem(id) {
 
     items =
+
         items.filter(
             (item) =>
                 item.id !== id
         );
+
+
+    if (
+        !items.length
+    ) {
+
+        lastSelectedCargoCode =
+            null;
+
+    }
 
 
     render();
@@ -401,17 +581,19 @@ function remove(id) {
 }
 
 
-// ============================================================
-// ACTUALIZAR CARGO
-// ============================================================
 
-function update(
+/* ============================================================
+   ACTUALIZAR CARGO
+   ============================================================ */
+
+function updateItem(
     id,
     field,
     value
 ) {
 
     const item =
+
         items.find(
             (entry) =>
                 entry.id === id
@@ -423,20 +605,70 @@ function update(
     }
 
 
-    item[field] = value;
+    item[field] =
+        value;
 
 
-    if (field === 'cargo') {
+    /*
+     * Si cambia el cargo,
+     * reiniciamos antigüedad
+     * y cantidad.
+     */
 
-        item.age = '';
+    if (
+        field ===
+        'cargoCode'
+    ) {
 
-        item.qty = 1;
+        item.age =
+            '';
 
 
-        last =
-            value === ''
-                ? last
-                : Number(value);
+        item.qty =
+            1;
+
+
+        lastSelectedCargoCode =
+
+            value
+
+                ?
+
+                value
+
+                :
+
+                null;
+
+    }
+
+
+    /*
+     * Horas cátedra.
+     */
+
+    if (
+        field ===
+        'qty'
+    ) {
+
+        item.qty =
+
+            Math.max(
+
+                1,
+
+                Math.min(
+
+                    120,
+
+                    Number(value)
+                    ||
+                    1
+
+                )
+
+            );
 
     }
 
@@ -446,110 +678,301 @@ function update(
 }
 
 
-// ============================================================
-// VALIDAR CARGO
-// ============================================================
+
+/* ============================================================
+   VALIDACIÓN
+   ============================================================ */
 
 function valid(item) {
 
-    return (
-        item.cargo !== '' &&
+    return Boolean(
+
+        item.cargoCode
+
+        &&
+
         item.age !== ''
+
     );
 
 }
 
 
-// ============================================================
-// VALOR INDIVIDUAL DEL CARGO
-// ============================================================
 
-function value(item) {
+/* ============================================================
+   HORAS EQUIVALENTES
+   ============================================================ */
 
-    if (!valid(item)) {
+function equivalentHours(item) {
+
+    if (
+        !valid(item)
+    ) {
+
         return 0;
+
     }
 
 
     const row =
-        D[
-            Number(item.cargo)
-        ];
+
+        getRowByCode(
+            item.cargoCode
+        );
 
 
-    const unitPocket =
+    const equivalence =
+
+        getHourEquivalence(
+            row
+        );
+
+
+    if (
+        !equivalence
+    ) {
+
+        return 0;
+
+    }
+
+
+    /*
+     * Hora cátedra individual.
+     */
+
+    if (
+        equivalence.type ===
+        'variable'
+    ) {
+
+        return Math.max(
+
+            1,
+
+            Number(item.qty)
+            ||
+            1
+
+        );
+
+    }
+
+
+    /*
+     * Cargo con cantidad fija
+     * de horas equivalentes.
+     */
+
+    return Number(
+        equivalence.hours || 0
+    );
+
+}
+
+
+
+/* ============================================================
+   VALOR INDIVIDUAL DEL CARGO
+   ============================================================ */
+
+function itemValue(item) {
+
+    if (
+        !valid(item)
+    ) {
+
+        return 0;
+
+    }
+
+
+    const row =
+
+        getRowByCode(
+            item.cargoCode
+        );
+
+
+    const unitValue =
+
         pocketValue(
             row,
             item.age
         );
 
 
-    // Hora cátedra suelta.
-    // Se multiplica por la cantidad.
+    /*
+     * Hora cátedra individual.
+     */
 
-    if (isVariableHour(row)) {
+    if (
+        isVariableHour(row)
+    ) {
 
         return (
-            unitPocket *
+
+            unitValue
+
+            *
+
             Math.max(
+
                 1,
-                Number(item.qty) || 1
+
+                Number(item.qty)
+                ||
+                1
+
             )
+
         );
 
     }
 
 
-    // Los demás cargos
-    // ya tienen su valor completo.
-
-    return unitPocket;
+    return unitValue;
 
 }
 
 
-// ============================================================
-// CÁLCULO DE TRAMOS HORARIOS
-// ============================================================
-//
-// La grilla AMET tiene:
-//
-// 5099  = HS CATEDRA
-// 5099B = HS CATEDRA >30
-// 5099C = HS CATEDRA >40
-//
-// Se calcula:
-//
-// 1 a 30 HC  -> tarifa normal
-// 31 a 40 HC -> tarifa >30
-// 41+ HC     -> tarifa >40
-//
-// ============================================================
+
+/* ============================================================
+   BÁSICO DEL CARGO
+   ============================================================ */
+
+function itemBasic(item) {
+
+    if (
+        !valid(item)
+    ) {
+
+        return 0;
+
+    }
+
+
+    const row =
+
+        getRowByCode(
+            item.cargoCode
+        );
+
+
+    if (!row) {
+        return 0;
+    }
+
+
+    /*
+     * En hora cátedra,
+     * multiplicamos el básico
+     * por cantidad de horas.
+     */
+
+    if (
+        isVariableHour(row)
+    ) {
+
+        return (
+
+            Number(
+                row.basic || 0
+            )
+
+            *
+
+            Math.max(
+
+                1,
+
+                Number(item.qty)
+                ||
+                1
+
+            )
+
+        );
+
+    }
+
+
+    return Number(
+        row.basic || 0
+    );
+
+}
+
+
+
+/* ============================================================
+   CÁLCULO DE TRAMOS HORARIOS
+   ============================================================ */
 
 function hourBandCalculation(
     totalHours,
     age
 ) {
 
+    const regularCode =
+
+        RULES.hourBands
+            ?.regular
+            ?.code;
+
+
+    const over30Code =
+
+        RULES.hourBands
+            ?.over30
+            ?.code;
+
+
+    const over40Code =
+
+        RULES.hourBands
+            ?.over40
+            ?.code;
+
+
+
     const regularRow =
+
         getRowByCode(
-            BANDS.regular
+            regularCode
         );
 
 
     const over30Row =
+
         getRowByCode(
-            BANDS.over30
+            over30Code
         );
 
 
     const over40Row =
+
         getRowByCode(
-            BANDS.over40
+            over40Code
         );
 
 
+    if (
+        !regularRow
+        ||
+        !over30Row
+        ||
+        !over40Row
+    ) {
+
+        return null;
+
+    }
+
+
+
     const regularRate =
+
         pocketValue(
             regularRow,
             age
@@ -557,6 +980,7 @@ function hourBandCalculation(
 
 
     const over30Rate =
+
         pocketValue(
             over30Row,
             age
@@ -564,65 +988,110 @@ function hourBandCalculation(
 
 
     const over40Rate =
+
         pocketValue(
             over40Row,
             age
         );
 
 
-    // ========================================================
-    // TRAMO 1
-    // ========================================================
+
+    const firstLimit =
+
+        Number(
+
+            RULES.hourBands
+                ?.regular
+                ?.to
+
+            ||
+
+            30
+
+        );
+
+
+
+    const secondLimit =
+
+        Number(
+
+            RULES.hourBands
+                ?.over30
+                ?.to
+
+            ||
+
+            40
+
+        );
+
+
 
     const regularHours =
+
         Math.min(
             totalHours,
-            30
+            firstLimit
         );
 
 
-    // ========================================================
-    // TRAMO 2
-    // ========================================================
 
     const over30Hours =
+
         Math.min(
+
             Math.max(
-                totalHours - 30,
+
+                totalHours -
+                firstLimit,
+
                 0
+
             ),
-            10
+
+            secondLimit -
+            firstLimit
+
         );
 
 
-    // ========================================================
-    // TRAMO 3
-    // ========================================================
 
     const over40Hours =
+
         Math.max(
-            totalHours - 40,
+
+            totalHours -
+            secondLimit,
+
             0
+
         );
 
 
-    // ========================================================
-    // IMPORTES
-    // ========================================================
 
     const regularAmount =
-        regularHours *
+
+        regularHours
+        *
         regularRate;
 
 
+
     const over30Amount =
-        over30Hours *
+
+        over30Hours
+        *
         over30Rate;
 
 
+
     const over40Amount =
-        over40Hours *
+
+        over40Hours
+        *
         over40Rate;
+
 
 
     return {
@@ -647,9 +1116,17 @@ function hourBandCalculation(
 
         over40Amount,
 
+
         total:
-            regularAmount +
-            over30Amount +
+
+            regularAmount
+
+            +
+
+            over30Amount
+
+            +
+
             over40Amount
 
     };
@@ -657,168 +1134,184 @@ function hourBandCalculation(
 }
 
 
-// ============================================================
-// CALCULAR TODOS LOS TOTALES
-// ============================================================
+
+/* ============================================================
+   TOTALES GENERALES
+   ============================================================ */
 
 function calculateTotals() {
 
     const validItems =
+
         items.filter(valid);
 
 
-    // ========================================================
-    // SUMA SIMPLE
-    // ========================================================
 
     const directTotal =
+
         validItems.reduce(
             (sum, item) =>
-                sum + value(item),
+                sum +
+                itemValue(item),
+
             0
         );
 
 
-    // ========================================================
-    // CARGOS CON EQUIVALENCIA HORARIA
-    // ========================================================
 
     const hourItems =
+
         validItems.filter(
-            (item) => {
+            (item) =>
 
-                const row =
-                    D[
-                        Number(item.cargo)
-                    ];
+                isHourBased(
 
+                    getRowByCode(
+                        item.cargoCode
+                    )
 
-                return isHourBased(row);
-
-            }
+                )
         );
 
 
-    // ========================================================
-    // CARGOS SIN EQUIVALENCIA HORARIA
-    // ========================================================
 
     const nonHourItems =
+
         validItems.filter(
-            (item) => {
+            (item) =>
 
-                const row =
-                    D[
-                        Number(item.cargo)
-                    ];
+                !isHourBased(
 
+                    getRowByCode(
+                        item.cargoCode
+                    )
 
-                return !isHourBased(row);
-
-            }
+                )
         );
 
 
-    // ========================================================
-    // TOTAL DE CARGOS NO HORARIOS
-    // ========================================================
 
     const nonHourTotal =
+
         nonHourItems.reduce(
             (sum, item) =>
-                sum + value(item),
+                sum +
+                itemValue(item),
+
             0
         );
 
 
-    // ========================================================
-    // SUMA SIMPLE DE CARGOS HORARIOS
-    // ========================================================
-
-    const directHourTotal =
-        hourItems.reduce(
-            (sum, item) =>
-                sum + value(item),
-            0
-        );
-
-
-    // ========================================================
-    // COMPROBAR ANTIGÜEDAD
-    // ========================================================
-    //
-    // Para consolidar correctamente las HC,
-    // todas deben usar la misma antigüedad.
-    //
-    // ========================================================
-
-    const ageSet =
-        [
-            ...new Set(
-                hourItems.map(
-                    (item) =>
-                        Number(item.age)
-                )
-            )
-        ];
-
-
-    const sameHourAge =
-        ageSet.length <= 1;
-
-
-    // ========================================================
-    // TOTAL DE HORAS
-    // ========================================================
 
     const totalHours =
+
         hourItems.reduce(
             (sum, item) =>
                 sum +
                 equivalentHours(item),
+
             0
         );
 
 
-    let band = null;
+
+    const hourAges = [
+
+        ...new Set(
+
+            hourItems.map(
+                (item) =>
+                    Number(
+                        item.age
+                    )
+            )
+
+        )
+
+    ];
+
+
+
+    const sameHourAge =
+
+        hourAges.length <= 1;
+
+
+
+    let band =
+        null;
+
 
     let estimatedTotal =
         directTotal;
 
-    let adjustment = 0;
 
-    let canApplyBands = false;
+    let adjustment =
+        0;
 
 
-    // ========================================================
-    // APLICAR TRAMOS
-    // ========================================================
+    let canApplyBands =
+        false;
+
+
 
     if (
-        hourItems.length &&
+        hourItems.length
+
+        &&
+
         sameHourAge
     ) {
 
         band =
+
             hourBandCalculation(
                 totalHours,
-                ageSet[0]
+                hourAges[0]
             );
 
 
-        estimatedTotal =
-            nonHourTotal +
-            band.total;
+        if (
+            band
+        ) {
+
+            estimatedTotal =
+
+                nonHourTotal
+
+                +
+
+                band.total;
 
 
-        adjustment =
-            estimatedTotal -
-            directTotal;
+            adjustment =
+
+                estimatedTotal
+
+                -
+
+                directTotal;
 
 
-        canApplyBands = true;
+            canApplyBands =
+                true;
+
+        }
 
     }
+
+
+
+    const basicBase =
+
+        validItems.reduce(
+            (sum, item) =>
+                sum +
+                itemBasic(item),
+
+            0
+        );
+
 
 
     return {
@@ -833,8 +1326,6 @@ function calculateTotals() {
 
         nonHourTotal,
 
-        directHourTotal,
-
         totalHours,
 
         sameHourAge,
@@ -845,58 +1336,1063 @@ function calculateTotals() {
 
         adjustment,
 
-        canApplyBands
+        canApplyBands,
+
+        basicBase
 
     };
 
 }
 
 
-// ============================================================
-// RENDER PRINCIPAL
-// ============================================================
 
-function render() {
+/* ============================================================
+   CARGAR OPCIONES DE PRESENTISMO
+   ============================================================ */
+
+function populatePresentismOptions() {
+
+    const select =
+
+        $('#presentismLevel');
 
 
-    // ========================================================
-    // CARGOS
-    // ========================================================
+    if (!select) {
+        return;
+    }
 
-    $('#items').innerHTML =
+
+    const levels =
+
+        RULES.presentism
+            ?.levels
+
+        ||
+
+        [];
+
+
+    select.innerHTML =
+
+        levels
+
+            .map(
+                (level) => `
+
+                    <option
+                        value="${Number(level.factor)}"
+                    >
+
+                        ${level.label}
+
+                    </option>
+
+                `
+            )
+
+            .join('');
+
+
+    /*
+     * Respaldo por si falta rules.js.
+     */
+
+    if (
+        !levels.length
+    ) {
+
+        select.innerHTML = `
+
+            <option value="1">
+                100% · Completo
+            </option>
+
+        `;
+
+    }
+
+}
+
+
+
+/* ============================================================
+   FACTOR DE PRESENTISMO
+   ============================================================ */
+
+function presentismFactor() {
+
+    if (
+        !$('#presentismEnabled')
+            ?.checked
+    ) {
+
+        return 0;
+
+    }
+
+
+    return Number(
+
+        $('#presentismLevel')
+            ?.value
+
+        ||
+
+        1
+
+    );
+
+}
+
+
+
+/* ============================================================
+   CÁLCULO DE PRESENTISMO
+   ============================================================ */
+
+function calculatePresentism(
+    totals
+) {
+
+    if (
+        !totals.validItems.length
+    ) {
+
+        return {
+
+            factor:
+                1,
+
+            grossFull:
+                0,
+
+            netFull:
+                0,
+
+            loss:
+                0
+
+        };
+
+    }
+
+
+
+    const factor =
+
+        presentismFactor();
+
+
+
+    const presentismRate =
+
+        Number(
+
+            RULES.presentism
+                ?.rate
+
+            ||
+
+            0
+
+        );
+
+
+
+    const statutoryDiscountRate =
+
+        Number(
+
+            RULES.statutoryDiscountRate
+
+            ||
+
+            0
+
+        );
+
+
+
+    /*
+     * Presentismo completo bruto.
+     */
+
+    const grossFull =
+
+        totals.basicBase
+
+        *
+
+        presentismRate;
+
+
+
+    /*
+     * Aproximación neta.
+     */
+
+    const netFull =
+
+        grossFull
+
+        *
+
+        (
+            1 -
+            statutoryDiscountRate
+        );
+
+
+
+    /*
+     * Parte que deja de percibirse.
+     */
+
+    const loss =
+
+        netFull
+
+        *
+
+        (
+            1 -
+            factor
+        );
+
+
+
+    return {
+
+        factor,
+
+        grossFull,
+
+        netFull,
+
+        loss
+
+    };
+
+}
+
+
+
+/* ============================================================
+   RANGO DE ASIGNACIONES FAMILIARES
+   ============================================================ */
+
+function familyRangeFromIncome(
+    income
+) {
+
+    if (
+        !Number.isFinite(income)
+
+        ||
+
+        income <= 0
+    ) {
+
+        return null;
+
+    }
+
+
+    const ranges =
+
+        RULES.familyAllowances
+            ?.ranges
+
+        ||
+
+        [];
+
+
+    return (
+
+        ranges.find(
+            (range) =>
+
+                income
+                <=
+                Number(
+                    range.maxIncome
+                )
+        )
+
+        ||
+
+        null
+
+    );
+
+}
+
+
+
+/* ============================================================
+   ASIGNACIONES FAMILIARES
+   ============================================================ */
+
+function calculateFamilyAllowances() {
+
+    const children =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                $('#childrenCount')
+                    ?.value
+
+                ||
+
+                0
+
+            )
+
+        );
+
+
+
+    const disabledChildren =
+
+        Math.max(
+
+            0,
+
+            Number(
+
+                $('#disabledChildrenCount')
+                    ?.value
+
+                ||
+
+                0
+
+            )
+
+        );
+
+
+
+    const spouse =
+
+        Boolean(
+
+            $('#spouseAllowance')
+                ?.checked
+
+        );
+
+
+
+    const requested =
+
+        children > 0
+
+        ||
+
+        disabledChildren > 0
+
+        ||
+
+        spouse;
+
+
+
+    const incomeText =
+
+        $('#familyIncome')
+            ?.value
+            .trim()
+
+        ||
+
+        '';
+
+
+
+    const income =
+
+        incomeText === ''
+
+            ?
+
+            NaN
+
+            :
+
+            Number(
+                incomeText
+            );
+
+
+
+    /*
+     * Sin asignaciones solicitadas.
+     */
+
+    if (
+        !requested
+    ) {
+
+        return {
+
+            requested:
+                false,
+
+            total:
+                0,
+
+            range:
+                null,
+
+            status:
+                'No se cargaron asignaciones familiares.'
+
+        };
+
+    }
+
+
+
+    /*
+     * Falta ingreso.
+     */
+
+    if (
+        !Number.isFinite(income)
+
+        ||
+
+        income <= 0
+    ) {
+
+        return {
+
+            requested:
+                true,
+
+            total:
+                0,
+
+            range:
+                null,
+
+            status:
+                'Ingresá el ingreso computable mensual para determinar el rango de asignaciones.'
+
+        };
+
+    }
+
+
+
+    const range =
+
+        familyRangeFromIncome(
+            income
+        );
+
+
+
+    /*
+     * Supera tope.
+     */
+
+    if (
+        !range
+    ) {
+
+        return {
+
+            requested:
+                true,
+
+            total:
+                0,
+
+            range:
+                null,
+
+            status:
+
+                `El ingreso informado supera el tope de referencia de ${fmt(
+                    RULES.familyAllowances
+                        ?.maxIncome
+                    ||
+                    0
+                )}.`
+
+        };
+
+    }
+
+
+
+    const childAmount =
+
+        children
+
+        *
+
+        Number(
+            range.child || 0
+        );
+
+
+
+    const disabledChildAmount =
+
+        disabledChildren
+
+        *
+
+        Number(
+            range.disabledChild || 0
+        );
+
+
+
+    const spouseAmount =
+
+        spouse
+
+            ?
+
+            Number(
+                range.spouse || 0
+            )
+
+            :
+
+            0;
+
+
+
+    return {
+
+        requested:
+            true,
+
+        range,
+
+        childAmount,
+
+        disabledChildAmount,
+
+        spouseAmount,
+
+
+        total:
+
+            childAmount
+
+            +
+
+            disabledChildAmount
+
+            +
+
+            spouseAmount,
+
+
+        status:
+
+            `Asignaciones calculadas con el rango ${range.id} (${RULES.familyAllowances?.period || 'período vigente'}).`
+
+    };
+
+}
+
+
+
+/* ============================================================
+   CUOTA SINDICAL AMET
+   ============================================================ */
+
+function calculateUnionDeduction(
+    totals
+) {
+
+    const affiliated =
+
+        Boolean(
+
+            $('#ametAffiliate')
+                ?.checked
+
+        );
+
+
+    const rule =
+
+        RULES.unionFee
+
+        ||
+
+        {};
+
+
+
+    /*
+     * No afiliado.
+     */
+
+    if (
+        !affiliated
+    ) {
+
+        return {
+
+            affiliated:
+                false,
+
+            amount:
+                0,
+
+            configured:
+                Boolean(
+                    rule.enabled
+                ),
+
+            status:
+                'No se aplicó descuento sindical.'
+
+        };
+
+    }
+
+
+
+    /*
+     * Afiliado, pero todavía
+     * sin fórmula verificada.
+     */
+
+    if (
+        !rule.enabled
+
+        ||
+
+        rule.value === null
+
+        ||
+
+        rule.value === undefined
+    ) {
+
+        return {
+
+            affiliated:
+                true,
+
+            amount:
+                0,
+
+            configured:
+                false,
+
+            status:
+
+                rule.note
+
+                ||
+
+                'La cuota sindical automática todavía no está configurada.'
+
+        };
+
+    }
+
+
+
+    let amount =
+        0;
+
+
+    let baseLabel =
+        '';
+
+
+
+    /* ========================================================
+       CUOTA FIJA
+       ======================================================== */
+
+    if (
+        rule.type ===
+        'fixed'
+    ) {
+
+        amount =
+
+            Number(
+                rule.value
+            )
+
+            ||
+
+            0;
+
+
+        baseLabel =
+            'importe fijo';
+
+    }
+
+
+
+    /* ========================================================
+       CUOTA PORCENTUAL
+       ======================================================== */
+
+    else if (
+        rule.type ===
+        'percent'
+    ) {
+
+        const rate =
+
+            Number(
+                rule.value
+            )
+
+            ||
+
+            0;
+
+
+        let base =
+            null;
+
+
+
+        /*
+         * Porcentaje sobre básico.
+         */
+
+        if (
+            rule.base ===
+            'basic'
+        ) {
+
+            base =
+                totals.basicBase;
+
+
+            baseLabel =
+                'básico computado';
+
+        }
+
+
+
+        /*
+         * Porcentaje sobre estimación final
+         * antes de cuota sindical.
+         */
+
+        else if (
+            rule.base ===
+            'estimatedPocket'
+        ) {
+
+            base =
+                totals.estimatedTotal;
+
+
+            baseLabel =
+                'total estimado';
+
+        }
+
+
+
+        /*
+         * Porcentaje sobre suma individual.
+         */
+
+        else if (
+            rule.base ===
+            'directPocket'
+        ) {
+
+            base =
+                totals.directTotal;
+
+
+            baseLabel =
+                'suma individual';
+
+        }
+
+
+
+        /*
+         * Base todavía no implementada.
+         */
+
+        if (
+            base === null
+        ) {
+
+            return {
+
+                affiliated:
+                    true,
+
+                amount:
+                    0,
+
+                configured:
+                    false,
+
+                status:
+
+                    `La cuota sindical está configurada con una base todavía no implementada: ${rule.base || 'sin base'}.`
+
+            };
+
+        }
+
+
+
+        amount =
+
+            base
+
+            *
+
+            rate;
+
+    }
+
+
+
+    /*
+     * Tipo desconocido.
+     */
+
+    else {
+
+        return {
+
+            affiliated:
+                true,
+
+            amount:
+                0,
+
+            configured:
+                false,
+
+            status:
+
+                `Tipo de cuota sindical no reconocido: ${rule.type || 'sin definir'}.`
+
+        };
+
+    }
+
+
+
+    return {
+
+        affiliated:
+            true,
+
+        amount,
+
+        configured:
+            true,
+
+        status:
+
+            `Cuota sindical calculada automáticamente sobre ${baseLabel}.`
+
+    };
+
+}
+
+
+
+/* ============================================================
+   TOTAL FINAL
+   ============================================================ */
+
+function calculateFinalAccountTotal(
+    totals
+) {
+
+    const presentism =
+
+        calculatePresentism(
+            totals
+        );
+
+
+    const family =
+
+        calculateFamilyAllowances();
+
+
+    const union =
+
+        calculateUnionDeduction(
+            totals
+        );
+
+
+
+    const finalTotal =
+
+        Math.max(
+
+            0,
+
+            totals.estimatedTotal
+
+            -
+
+            presentism.loss
+
+            +
+
+            family.total
+
+            -
+
+            union.amount
+
+        );
+
+
+
+    return {
+
+        presentism,
+
+        family,
+
+        union,
+
+        finalTotal
+
+    };
+
+}
+
+
+
+/* ============================================================
+   RENDER DE CARGOS
+   ============================================================ */
+
+function renderItems() {
+
+    const container =
+
+        $('#items');
+
+
+    if (!container) {
+        return;
+    }
+
+
+
+    container.innerHTML =
+
         items
+
             .map(
                 (item, number) => {
 
+
                     const row =
-                        item.cargo !== ''
-                            ? D[
-                                Number(item.cargo)
-                            ]
-                            : null;
+
+                        getRowByCode(
+                            item.cargoCode
+                        );
 
 
                     const variableHour =
-                        isVariableHour(row);
+
+                        isVariableHour(
+                            row
+                        );
 
 
                     const hourBased =
-                        isHourBased(row);
+
+                        isHourBased(
+                            row
+                        );
 
 
                     const ok =
-                        valid(item);
+
+                        valid(
+                            item
+                        );
 
 
                     const hours =
-                        ok && hourBased
-                            ? equivalentHours(item)
-                            : 0;
+
+                        ok
+                        &&
+                        hourBased
+
+                            ?
+
+                            equivalentHours(
+                                item
+                            )
+
+                            :
+
+                            0;
+
+
+
+                    let quantityHelp =
+
+                        'Una unidad por cargo.';
+
+
+
+                    if (
+                        variableHour
+                    ) {
+
+                        quantityHelp =
+
+                            'Ingresá la cantidad de horas cátedra.';
+
+                    }
+
+
+                    else if (
+                        hourBased
+                        &&
+                        row
+                    ) {
+
+                        quantityHelp =
+
+                            `${getHourEquivalence(row)?.hours || 0} HC equivalentes por cargo.`;
+
+                    }
+
 
 
                     return `
 
-                        <div
+                        <article
                             class="line-item"
                             data-id="${item.id}"
                         >
@@ -912,9 +2408,12 @@ function render() {
                                 <button
                                     class="remove"
                                     type="button"
-                                    onclick="remove(${item.id})"
+                                    data-action="remove"
+                                    data-id="${item.id}"
                                 >
+
                                     Eliminar ×
+
                                 </button>
 
                             </div>
@@ -933,18 +2432,14 @@ function render() {
 
 
                                         <select
-                                            onchange="
-                                                update(
-                                                    ${item.id},
-                                                    'cargo',
-                                                    this.value
-                                                )
-                                            "
+                                            class="cargo-select"
+                                            data-action="cargo"
+                                            data-id="${item.id}"
                                         >
 
                                             ${
                                                 cargoOptions(
-                                                    item.cargo
+                                                    item.cargoCode
                                                 )
                                             }
 
@@ -960,20 +2455,17 @@ function render() {
 
 
                                         <select
+                                            class="age-select"
+                                            data-action="age"
+                                            data-id="${item.id}"
 
                                             ${
                                                 row
-                                                    ? ''
-                                                    : 'disabled'
+                                                    ?
+                                                    ''
+                                                    :
+                                                    'disabled'
                                             }
-
-                                            onchange="
-                                                update(
-                                                    ${item.id},
-                                                    'age',
-                                                    this.value
-                                                )
-                                            "
                                         >
 
                                             ${
@@ -989,25 +2481,34 @@ function render() {
 
 
                                     <label
-                                        style="
-                                            opacity:
+                                        class="
+                                            quantity-label
                                             ${
                                                 variableHour
-                                                    ? 1
-                                                    : 0.48
+                                                    ?
+                                                    ''
+                                                    :
+                                                    'quantity-disabled'
                                             }
                                         "
                                     >
 
-
                                         ${
                                             variableHour
-                                                ? 'Cantidad de horas'
-                                                : 'Cantidad'
+                                                ?
+                                                'Cantidad de horas'
+                                                :
+                                                'Cantidad'
                                         }
 
 
                                         <input
+
+                                            class="qty-input"
+
+                                            data-action="qty"
+
+                                            data-id="${item.id}"
 
                                             type="number"
 
@@ -1019,43 +2520,17 @@ function render() {
 
                                             ${
                                                 variableHour
-                                                    ? ''
-                                                    : 'disabled'
+                                                    ?
+                                                    ''
+                                                    :
+                                                    'disabled'
                                             }
-
-                                            onchange="
-                                                update(
-                                                    ${item.id},
-                                                    'qty',
-                                                    this.value
-                                                )
-                                            "
 
                                         >
 
 
                                         <small>
-
-                                            ${
-                                                variableHour
-
-                                                    ?
-
-                                                    'Ingresá la cantidad total de horas cátedra de esta línea.'
-
-                                                    :
-
-                                                    hourBased
-
-                                                        ?
-
-                                                        `${HOURS[row.code]} HC equivalentes por cargo.`
-
-                                                        :
-
-                                                        'Una unidad por cargo.'
-                                            }
-
+                                            ${quantityHelp}
                                         </small>
 
                                     </label>
@@ -1074,9 +2549,13 @@ function render() {
 
                                             ${
                                                 ok
+
                                                     ?
+
                                                     'BOLSILLO SEGÚN GRILLA'
+
                                                     :
+
                                                     'COMPLETÁ CARGO Y ANTIGÜEDAD'
                                             }
 
@@ -1087,11 +2566,17 @@ function render() {
 
                                             ${
                                                 ok
+
                                                     ?
+
                                                     fmt(
-                                                        value(item)
+                                                        itemValue(
+                                                            item
+                                                        )
                                                     )
+
                                                     :
+
                                                     '—'
                                             }
 
@@ -1108,19 +2593,16 @@ function render() {
 
                                                 ?
 
-                                                `
-                                                    Código ${row.code}
-                                                    · Índice ${row.index.toLocaleString('es-AR')}
-                                                    · Básico ${fmt(row.basic)}
-
-                                                    ${
-                                                        hours
-                                                            ?
-                                                            ` · ${hours} HC equivalentes`
-                                                            :
-                                                            ''
-                                                    }
-                                                `
+                                                `Código ${row.code}
+                                                · Índice ${Number(row.index).toLocaleString('es-AR')}
+                                                · Básico ${fmt(row.basic)}
+                                                ${
+                                                    hours
+                                                        ?
+                                                        ` · ${hours} HC equivalentes`
+                                                        :
+                                                        ''
+                                                }`
 
                                                 :
 
@@ -1136,7 +2618,7 @@ function render() {
                             </div>
 
 
-                        </div>
+                        </article>
 
                     `;
 
@@ -1145,129 +2627,99 @@ function render() {
 
             .join('');
 
-
-    // ========================================================
-    // ESTADO VACÍO
-    // ========================================================
-
-    $('#emptyState')
-        .classList
-        .toggle(
-            'hidden',
-            items.length > 0
-        );
-
-
-    $('#addArea')
-        .classList
-        .toggle(
-            'hidden',
-            items.length === 0
-        );
-
-
-    // ========================================================
-    // TOTALES
-    // ========================================================
-
-    const totals =
-        calculateTotals();
-
-
-    renderTotals(
-        totals
-    );
-
-
-    renderBankComparison(
-        totals
-    );
-
-
-    bars(
-        last === null
-            ? null
-            : D[last]
-    );
-
 }
 
 
-// ============================================================
-// MOSTRAR TOTALES
-// ============================================================
+
+/* ============================================================
+   RENDER DE TOTALES
+   ============================================================ */
 
 function renderTotals(
     totals
 ) {
 
     const hasValid =
+
         totals.validItems.length > 0;
 
 
+
     $('#grand')
-        .classList
+        ?.classList
         .toggle(
             'hidden',
             !hasValid
         );
+
 
 
     $('#settlement')
-        .classList
+        ?.classList
         .toggle(
             'hidden',
             !hasValid
         );
 
 
-    if (!hasValid) {
+
+    if (
+        !hasValid
+    ) {
+
         return;
+
     }
 
 
-    // ========================================================
-    // SUMA SIMPLE
-    // ========================================================
 
     $('#grandTotal')
         .textContent =
+
             fmt(
                 totals.directTotal
             );
 
 
+
     $('#grandDesc')
         .textContent =
+
             `${totals.validItems.length} ${
                 totals.validItems.length === 1
+
                     ?
+
                     'cargo calculado'
+
                     :
+
                     'cargos calculados'
             }`;
 
 
-    // ========================================================
-    // TOTAL ESTIMADO
-    // ========================================================
 
     $('#estimatedTotal')
         .textContent =
+
             fmt(
                 totals.estimatedTotal
             );
 
 
+
     $('#adjustmentTotal')
         .textContent =
+
             fmt(
                 totals.adjustment
             );
 
 
+
     $('#totalHours')
         .textContent =
+
             totals.hourItems.length
 
                 ?
@@ -1279,22 +2731,24 @@ function renderTotals(
                 '—';
 
 
-    // ========================================================
-    // SIN CARGOS HORARIOS
-    // ========================================================
+
+    /*
+     * Sin cargos horarios.
+     */
 
     if (
         !totals.hourItems.length
     ) {
 
+        $('#bandBreakdown')
+            .innerHTML =
+                '';
+
+
         $('#bandsStatus')
             .textContent =
 
-                'No hay cargos expresados en horas cátedra. El total estimado coincide con la suma de la grilla.';
-
-
-        $('#bandBreakdown')
-            .innerHTML = '';
+                'No hay cargos con equivalencia explícita en horas cátedra. El total consolidado coincide con la suma individual.';
 
 
         return;
@@ -1302,22 +2756,24 @@ function renderTotals(
     }
 
 
-    // ========================================================
-    // ANTIGÜEDADES DISTINTAS
-    // ========================================================
+
+    /*
+     * Antigüedades diferentes.
+     */
 
     if (
         !totals.sameHourAge
     ) {
 
+        $('#bandBreakdown')
+            .innerHTML =
+                '';
+
+
         $('#bandsStatus')
             .textContent =
 
-                'Los cargos horarios tienen antigüedades distintas. Para evitar un cálculo arbitrario, no se aplicó el ajuste automático por tramos.';
-
-
-        $('#bandBreakdown')
-            .innerHTML = '';
+                'Los cargos horarios tienen antigüedades distintas. Para evitar un cálculo arbitrario no se aplicó el ajuste automático por tramos.';
 
 
         return;
@@ -1325,23 +2781,44 @@ function renderTotals(
     }
 
 
-    // ========================================================
-    // INFORMACIÓN
-    // ========================================================
+
+    /*
+     * Falta información de tramos.
+     */
+
+    if (
+        !totals.band
+    ) {
+
+        $('#bandBreakdown')
+            .innerHTML =
+                '';
+
+
+        $('#bandsStatus')
+            .textContent =
+
+                'No fue posible aplicar los tramos horarios porque faltan las filas de referencia en la grilla seleccionada.';
+
+
+        return;
+
+    }
+
+
+
+    const band =
+
+        totals.band;
+
+
 
     $('#bandsStatus')
         .textContent =
 
-            'Para los cargos expresados en horas, el motor consolida la carga total de la persona y aplica las tres filas diferenciadas publicadas en la grilla AMET.';
+            'La carga horaria se consolida utilizando las tres filas de horas cátedra definidas en la grilla del período.';
 
 
-    const band =
-        totals.band;
-
-
-    // ========================================================
-    // DETALLE DE TRAMOS
-    // ========================================================
 
     $('#bandBreakdown')
         .innerHTML = `
@@ -1350,14 +2827,28 @@ function renderTotals(
             <div class="band-row">
 
                 <span>
-                    Horas 1 a 30
+
+                    ${
+                        RULES.hourBands
+                            ?.regular
+                            ?.label
+
+                        ||
+
+                        'Horas 1 a 30'
+                    }
+
                 </span>
 
+
                 <b>
-                    ${band.regularHours} HC
-                    ×
+
+                    ${band.regularHours}
+                    HC ×
                     ${fmt(band.regularRate)}
+
                 </b>
+
 
                 <strong>
                     ${fmt(band.regularAmount)}
@@ -1370,14 +2861,28 @@ function renderTotals(
             <div class="band-row">
 
                 <span>
-                    Horas 31 a 40
+
+                    ${
+                        RULES.hourBands
+                            ?.over30
+                            ?.label
+
+                        ||
+
+                        'Horas 31 a 40'
+                    }
+
                 </span>
 
+
                 <b>
-                    ${band.over30Hours} HC
-                    ×
+
+                    ${band.over30Hours}
+                    HC ×
                     ${fmt(band.over30Rate)}
+
                 </b>
+
 
                 <strong>
                     ${fmt(band.over30Amount)}
@@ -1390,14 +2895,28 @@ function renderTotals(
             <div class="band-row">
 
                 <span>
-                    Horas superiores a 40
+
+                    ${
+                        RULES.hourBands
+                            ?.over40
+                            ?.label
+
+                        ||
+
+                        'Horas superiores a 40'
+                    }
+
                 </span>
 
+
                 <b>
-                    ${band.over40Hours} HC
-                    ×
+
+                    ${band.over40Hours}
+                    HC ×
                     ${fmt(band.over40Rate)}
+
                 </b>
+
 
                 <strong>
                     ${fmt(band.over40Amount)}
@@ -1411,30 +2930,228 @@ function renderTotals(
 }
 
 
-// ============================================================
-// MOSTRAR COMPARACIÓN CON CUENTA SUELDO
-// ============================================================
 
-function renderBankComparison(
-    totals
+/* ============================================================
+   RENDER PERSONAL
+   ============================================================ */
+
+function renderPersonalSection(
+    totals,
+    extras
 ) {
 
     const hasValid =
+
         totals.validItems.length > 0;
 
 
-    $('#bankComparison')
-        .classList
+
+    $('#personalSummary')
+        ?.classList
         .toggle(
             'hidden',
             !hasValid
         );
 
 
-    if (!hasValid) {
+
+    $('#presentismOptions')
+        ?.classList
+        .toggle(
+
+            'hidden',
+
+            !$('#presentismEnabled')
+                ?.checked
+
+        );
+
+
+
+    $('#unionInfo')
+        ?.classList
+        .toggle(
+
+            'hidden',
+
+            !$('#ametAffiliate')
+                ?.checked
+
+        );
+
+
+
+    /*
+     * Información de la regla sindical.
+     */
+
+    if (
+        $('#unionRuleStatus')
+    ) {
+
+        const rule =
+
+            RULES.unionFee
+
+            ||
+
+            {};
+
+
+        $('#unionRuleStatus')
+            .textContent =
+
+                rule.enabled
+
+                    ?
+
+                    'La cuota sindical se calcula automáticamente según la regla configurada.'
+
+                    :
+
+                    (
+                        rule.note
+
+                        ||
+
+                        'La fórmula automática de cuota sindical todavía no está configurada.'
+                    );
+
+    }
+
+
+
+    if (
+        !hasValid
+    ) {
+
+        return;
+
+    }
+
+
+
+    $('#presentismFullNet')
+        .textContent =
+
+            fmt(
+                extras.presentism.netFull
+            );
+
+
+
+    $('#presentismAdjustment')
+        .textContent =
+
+            extras.presentism.loss > 0
+
+                ?
+
+                `-${fmt(extras.presentism.loss)}`
+
+                :
+
+                fmt(0);
+
+
+
+    $('#familyTotal')
+        .textContent =
+
+            fmt(
+                extras.family.total
+            );
+
+
+
+    $('#familyStatus')
+        .textContent =
+
+            extras.family.status;
+
+
+
+    $('#unionDeduction')
+        .textContent =
+
+            extras.union.amount > 0
+
+                ?
+
+                `-${fmt(extras.union.amount)}`
+
+                :
+
+                fmt(0);
+
+
+
+    $('#unionStatus')
+        .textContent =
+
+            extras.union.status;
+
+
+
+    $('#finalAccountTotal')
+        .textContent =
+
+            fmt(
+                extras.finalTotal
+            );
+
+}
+
+
+
+/* ============================================================
+   COMPARACIÓN CON CUENTA SUELDO
+   ============================================================ */
+
+function renderBankComparison(
+    totals,
+    extras
+) {
+
+    const hasValid =
+
+        totals.validItems.length > 0;
+
+
+
+    const showBank =
+
+        RULES.interface
+            ?.showBankComparison
+
+        !==
+
+        false;
+
+
+
+    $('#bankComparison')
+        ?.classList
+        .toggle(
+
+            'hidden',
+
+            !hasValid
+            ||
+            !showBank
+
+        );
+
+
+
+    if (
+        !hasValid
+        ||
+        !showBank
+    ) {
 
         $('#bankDifferenceBox')
-            .classList
+            ?.classList
             .add(
                 'hidden'
             );
@@ -1445,65 +3162,62 @@ function renderBankComparison(
     }
 
 
+
     $('#bankExpected')
         .textContent =
+
             fmt(
-                totals.estimatedTotal
+                extras.finalTotal
             );
 
 
+
     updateBankDifference(
-        totals.estimatedTotal
+        extras.finalTotal
     );
 
 }
 
 
-// ============================================================
-// COMPARAR CON EL MONTO ACREDITADO
-// ============================================================
+
+/* ============================================================
+   DIFERENCIA BANCARIA
+   ============================================================ */
 
 function updateBankDifference(
     expectedTotal
 ) {
 
     const input =
+
         $('#bankAmount');
 
 
     const box =
+
         $('#bankDifferenceBox');
 
 
-    const differenceElement =
-        $('#bankDifference');
-
-
-    const statusElement =
-        $('#bankStatus');
-
-
     if (
-        !input ||
+        !input
+        ||
         !box
     ) {
+
         return;
+
     }
 
 
-    const received =
-        Number(
-            input.value
-        );
+
+    const raw =
+
+        input.value.trim();
 
 
-    // ========================================================
-    // CAMPO VACÍO
-    // ========================================================
 
     if (
-        !input.value.trim() ||
-        Number.isNaN(received)
+        !raw
     ) {
 
         box
@@ -1518,45 +3232,78 @@ function updateBankDifference(
     }
 
 
-    box
-        .classList
-        .remove(
-            'hidden'
-        );
+
+    const received =
+
+        Number(raw);
 
 
-    box
-        .classList
-        .remove(
-            'difference-ok',
-            'difference-positive',
-            'difference-negative'
-        );
 
+    if (
+        !Number.isFinite(
+            received
+        )
+    ) {
 
-    const difference =
-        received -
-        expectedTotal;
-
-
-    differenceElement
-        .textContent =
-            fmt(
-                Math.abs(
-                    difference
-                )
+        box
+            .classList
+            .add(
+                'hidden'
             );
 
 
-    // ========================================================
-    // COINCIDE
-    // ========================================================
+        return;
+
+    }
+
+
+
+    const difference =
+
+        received
+
+        -
+
+        expectedTotal;
+
+
+
+    box
+        .classList
+        .remove(
+
+            'hidden',
+
+            'difference-ok',
+
+            'difference-positive',
+
+            'difference-negative'
+
+        );
+
+
+
+    $('#bankDifference')
+        .textContent =
+
+            fmt(
+
+                Math.abs(
+                    difference
+                )
+
+            );
+
+
 
     if (
-        Math.abs(difference) < 1
+        Math.abs(
+            difference
+        ) < 1
     ) {
 
-        statusElement
+        $('#bankStatus')
             .textContent =
 
                 'El monto acreditado coincide con la estimación.';
@@ -1568,21 +3315,15 @@ function updateBankDifference(
                 'difference-ok'
             );
 
-
-        return;
-
     }
 
 
-    // ========================================================
-    // RECIBIÓ MÁS
-    // ========================================================
 
-    if (
+    else if (
         difference > 0
     ) {
 
-        statusElement
+        $('#bankStatus')
             .textContent =
 
                 `Recibiste ${fmt(difference)} más que la estimación.`;
@@ -1594,51 +3335,64 @@ function updateBankDifference(
                 'difference-positive'
             );
 
-
-        return;
-
     }
 
 
-    // ========================================================
-    // RECIBIÓ MENOS
-    // ========================================================
 
-    statusElement
-        .textContent =
+    else {
 
-            `Recibiste ${fmt(Math.abs(difference))} menos que la estimación.`;
+        $('#bankStatus')
+            .textContent =
+
+                `Recibiste ${fmt(Math.abs(difference))} menos que la estimación.`;
 
 
-    box
-        .classList
-        .add(
-            'difference-negative'
-        );
+        box
+            .classList
+            .add(
+                'difference-negative'
+            );
+
+    }
 
 }
 
 
-// ============================================================
-// GRÁFICO POR ANTIGÜEDAD
-// ============================================================
 
-function bars(row) {
+/* ============================================================
+   GRÁFICO DE ANTIGÜEDAD
+   ============================================================ */
 
-    if (!row) {
+function renderBars(row) {
 
-        $('#bars')
-            .innerHTML = `
+    const bars =
 
-                <div class="bars-empty">
+        $('#bars');
 
-                    Seleccioná un cargo
-                    para ver la comparación
-                    por antigüedad.
 
-                </div>
+    if (!bars) {
+        return;
+    }
 
-            `;
+
+
+    if (
+        !row
+        ||
+        isBandOnly(row)
+    ) {
+
+        bars.innerHTML = `
+
+            <div class="bars-empty">
+
+                Seleccioná un cargo
+                para ver la comparación
+                por antigüedad.
+
+            </div>
+
+        `;
 
 
         return;
@@ -1646,9 +3400,12 @@ function bars(row) {
     }
 
 
+
     const values =
+
         A.map(
             (age) =>
+
                 pocketValue(
                     row,
                     age
@@ -1656,173 +3413,95 @@ function bars(row) {
         );
 
 
+
     const max =
+
         Math.max(
-            ...values
+            ...values,
+            1
         );
 
 
-    $('#bars')
-        .innerHTML =
-            values
-                .map(
-                    (value, index) => `
 
-                        <div class="bar">
+    bars.innerHTML =
 
-                            <i
-                                style="
-                                    height:
-                                    ${
-                                        Math.max(
-                                            3,
-                                            (
-                                                value /
-                                                max
-                                            ) * 190
+        values
+
+            .map(
+                (
+                    currentValue,
+                    index
+                ) => `
+
+
+                    <div class="bar">
+
+
+                        <i
+                            style="
+                                height:
+                                ${
+                                    Math.max(
+
+                                        3,
+
+                                        (
+                                            currentValue
+                                            /
+                                            max
                                         )
-                                    }px
-                                "
-                            ></i>
 
+                                        *
 
-                            <b>
-                                ${A[index]} a.
-                            </b>
+                                        190
 
-
-                            <small>
-                                ${compact(value)}
-                            </small>
-
-                        </div>
-
-                    `
-                )
-
-                .join('');
-
-}
-
-
-// ============================================================
-// TABLA COMPLETA
-// ============================================================
-
-function renderTable(
-    query = ''
-) {
-
-    const normalized =
-        query
-            .toLowerCase()
-            .normalize(
-                'NFD'
-            )
-            .replace(
-                /[\u0300-\u036f]/g,
-                ''
-            );
-
-
-    const rows =
-        D.filter(
-            (row) =>
-
-                `${row.code} ${row.name}`
-
-                    .toLowerCase()
-
-                    .normalize(
-                        'NFD'
-                    )
-
-                    .replace(
-                        /[\u0300-\u036f]/g,
-                        ''
-                    )
-
-                    .includes(
-                        normalized
-                    )
-
-        );
-
-
-    $('#tbody')
-        .innerHTML =
-            rows
-                .map(
-                    (row) => `
-
-                        <tr>
-
-
-                            <td>
-
-                                <b>
-                                    ${row.code}
-                                    ·
-                                    ${row.name}
-                                </b>
-
-                            </td>
-
-
-                            <td>
-                                ${fmt(row.basic)}
-                            </td>
-
-
-                            <td>
-                                ${fmt(row.fixed)}
-                            </td>
-
-
-                            <td>
-                                ${fmt(row.pocket[0])}
-                            </td>
-
-
-                            ${
-                                A
-                                    .map(
-                                        (age) => `
-
-                                            <td>
-                                                ${
-                                                    fmt(
-                                                        pocketValue(
-                                                            row,
-                                                            age
-                                                        )
-                                                    )
-                                                }
-                                            </td>
-
-                                        `
                                     )
+                                }px
+                            "
+                        ></i>
 
-                                    .join('')
-                            }
+
+                        <b>
+                            ${A[index]} a.
+                        </b>
 
 
-                        </tr>
+                        <small>
+                            ${compact(currentValue)}
+                        </small>
 
-                    `
-                )
 
-                .join('');
+                    </div>
+
+
+                `
+            )
+
+            .join('');
 
 }
 
 
-// ============================================================
-// ENCABEZADO DE TABLA
-// ============================================================
 
-$('#thead')
-    .innerHTML = `
+/* ============================================================
+   ENCABEZADO DE TABLA
+   ============================================================ */
+
+function renderTableHeader() {
+
+    const thead =
+
+        $('#thead');
+
+
+    if (!thead) {
+        return;
+    }
+
+
+
+    thead.innerHTML = `
+
 
         <tr>
 
@@ -1830,17 +3509,21 @@ $('#thead')
                 Código · Cargo
             </th>
 
+
             <th>
                 Básico
             </th>
+
 
             <th>
                 Suma fija
             </th>
 
+
             <th>
                 Sueldo c/ jerarquía
             </th>
+
 
             ${
                 A
@@ -1861,218 +3544,2066 @@ $('#thead')
 
     `;
 
-
-// ============================================================
-// BOTÓN PRIMER CARGO
-// ============================================================
-
-$('#firstAdd')
-    .onclick =
-        add;
+}
 
 
-// ============================================================
-// BOTÓN AGREGAR CARGO
-// ============================================================
 
-$('#addItem')
-    .onclick =
-        add;
+/* ============================================================
+   TABLA COMPLETA
+   ============================================================ */
 
+function renderTable(
+    query = ''
+) {
 
-// ============================================================
-// LIMPIAR CALCULADORA
-// ============================================================
+    const tbody =
 
-$('#clearAll')
-    .onclick =
-        () => {
-
-            items = [];
-
-            last = null;
+        $('#tbody');
 
 
-            $('#bankAmount')
-                .value = '';
+    if (!tbody) {
+        return;
+    }
 
 
-            render();
 
-        };
+    const normalized =
+
+        query
+
+            .toLowerCase()
+
+            .normalize(
+                'NFD'
+            )
+
+            .replace(
+                /[\u0300-\u036f]/g,
+                ''
+            );
 
 
-// ============================================================
-// COMPARACIÓN CON BANCO
-// ============================================================
 
-$('#bankAmount')
-    .addEventListener(
-        'input',
-        () => {
+    const rows =
 
-            const totals =
-                calculateTotals();
+        D.filter(
+            (row) => {
 
 
-            if (
-                totals.validItems.length
-            ) {
+                const text =
 
-                updateBankDifference(
-                    totals.estimatedTotal
+                    `${row.code} ${row.name}`
+
+                        .toLowerCase()
+
+                        .normalize(
+                            'NFD'
+                        )
+
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ''
+                        );
+
+
+                return text.includes(
+                    normalized
                 );
 
             }
-
-        }
-    );
+        );
 
 
-// ============================================================
-// BUSCADOR DE GRILLA
-// ============================================================
 
-$('#search')
-    .addEventListener(
-        'input',
-        (event) => {
+    tbody.innerHTML =
 
-            renderTable(
-                event.target.value
-            );
+        rows
 
-        }
-    );
+            .map(
+                (row) => `
 
 
-// ============================================================
-// DESCARGAR CSV
-// ============================================================
-
-$('#csv')
-    .onclick =
-        () => {
+                    <tr>
 
 
-            const lines = [
+                        <td>
 
-                [
-                    'Código',
-                    'Cargo',
-                    'Índice',
-                    'Valor índice',
-                    'Básico',
-                    'Suma fija',
-                    'Jerarquía',
-                    'Sueldo c/ jerarquía',
+                            <b>
+                                ${row.code}
+                                ·
+                                ${row.name}
+                            </b>
 
-                    ...A.map(
-                        (age) =>
-                            `${age} años`
-                    )
-                ],
+                        </td>
 
 
-                ...D.map(
-                    (row) => [
+                        <td>
+                            ${fmt(row.basic)}
+                        </td>
 
-                        row.code,
 
-                        row.name,
+                        <td>
+                            ${fmt(row.fixed)}
+                        </td>
 
-                        row.index,
 
-                        row.indexValue,
+                        <td>
+                            ${fmt(row.pocket?.[0] || 0)}
+                        </td>
 
-                        row.basic,
 
-                        row.fixed,
+                        ${
+                            A
+                                .map(
+                                    (age) => `
 
-                        row.hierarchy,
+                                        <td>
 
-                        row.pocket[0],
+                                            ${
+                                                fmt(
+                                                    pocketValue(
+                                                        row,
+                                                        age
+                                                    )
+                                                )
+                                            }
 
-                        ...A.map(
-                            (age) =>
-                                pocketValue(
-                                    row,
-                                    age
+                                        </td>
+
+                                    `
                                 )
-                        )
 
-                    ]
+                                .join('')
+                        }
+
+
+                    </tr>
+
+
+                `
+            )
+
+            .join('');
+
+}
+
+
+
+/* ============================================================
+   DESCUENTOS
+   ============================================================ */
+
+function renderDiscounts() {
+
+    const container =
+
+        $('#discountsList');
+
+
+    if (!container) {
+        return;
+    }
+
+
+
+    const discounts =
+
+        Object.values(
+            RULES.discounts || {}
+        );
+
+
+
+    if (
+        !discounts.length
+    ) {
+
+        container.innerHTML = `
+
+            <p>
+                No hay descuentos configurados.
+            </p>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
+    container.innerHTML =
+
+        discounts
+
+            .map(
+                (discount) => `
+
+                    <p>
+
+                        <b>
+                            ${discount.label}
+                        </b>
+
+                        :
+
+                        ${
+                            (
+                                Number(
+                                    discount.rate || 0
+                                )
+
+                                *
+
+                                100
+                            )
+
+                            .toLocaleString(
+                                'es-AR'
+                            )
+                        }
+                        %
+
+                    </p>
+
+                `
+            )
+
+            .join('');
+
+}
+
+
+
+/* ============================================================
+   GARANTÍAS
+   ============================================================ */
+
+function renderGuarantees() {
+
+    const container =
+
+        $('#guaranteesList');
+
+
+    if (!container) {
+        return;
+    }
+
+
+
+    const guarantees =
+
+        Object.values(
+
+            currentPeriod
+                ?.guarantees
+
+            ||
+
+            {}
+
+        );
+
+
+
+    if (
+        !guarantees.length
+    ) {
+
+        container.innerHTML = `
+
+            <p>
+                No hay garantías cargadas para este período.
+            </p>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
+    container.innerHTML =
+
+        guarantees
+
+            .map(
+                (guarantee) => {
+
+
+                    const note =
+
+                        guarantee.note
+
+                            ?
+
+                            ` · ${guarantee.note}`
+
+                            :
+
+                            '';
+
+
+                    return `
+
+                        <p>
+
+                            <b>
+                                ${guarantee.label}
+                            </b>
+
+                            :
+
+                            ${fmt(guarantee.amount)}
+
+                            ${note}
+
+                        </p>
+
+                    `;
+
+                }
+            )
+
+            .join('');
+
+}
+
+
+
+/* ============================================================
+   FUENTE DE LA GRILLA
+   ============================================================ */
+
+function renderSource() {
+
+    const container =
+
+        $('#sourceInfo');
+
+
+    if (!container) {
+        return;
+    }
+
+
+
+    const source =
+
+        currentPeriod
+            ?.source
+
+        ||
+
+        {};
+
+
+
+    container.innerHTML = `
+
+
+        <p>
+
+            <b>
+                ${
+                    source.title
+                    ||
+                    'Grilla salarial'
+                }
+            </b>
+
+        </p>
+
+
+        ${
+            source.organization
+
+                ?
+
+                `<p>${source.organization}</p>`
+
+                :
+
+                ''
+        }
+
+
+        ${
+            source.regional
+
+                ?
+
+                `<p>${source.regional}</p>`
+
+                :
+
+                ''
+        }
+
+
+        ${
+            source.address
+
+                ?
+
+                `<p>${source.address}</p>`
+
+                :
+
+                ''
+        }
+
+
+        ${
+            source.website
+
+                ?
+
+                `
+
+                    <p>
+
+                        <a
+                            href="${source.website}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Sitio oficial
+                        </a>
+
+                    </p>
+
+                `
+
+                :
+
+                ''
+        }
+
+
+        ${
+            source.email
+
+                ?
+
+                `<p>${source.email}</p>`
+
+                :
+
+                ''
+        }
+
+
+    `;
+
+}
+
+
+
+/* ============================================================
+   INFORMACIÓN DEL PERÍODO
+   ============================================================ */
+
+function renderPeriodMetadata() {
+
+    if (
+        !currentPeriod
+    ) {
+
+        return;
+
+    }
+
+
+
+    const label =
+
+        currentPeriod.label
+
+        ||
+
+        currentPeriodId
+
+        ||
+
+        '—';
+
+
+
+    const indexValue =
+
+        Number(
+            currentPeriod.indexValue || 0
+        );
+
+
+
+    document.title =
+
+        `AMET Regional 1 · Calculadora Salarial · ${label}`;
+
+
+
+    if (
+        $('#heroPeriodTag')
+    ) {
+
+        $('#heroPeriodTag')
+            .textContent =
+
+                `AMET REGIONAL 1 · CABA · ${label.toUpperCase()}`;
+
+    }
+
+
+
+    if (
+        $('#heroPeriod')
+    ) {
+
+        $('#heroPeriod')
+            .textContent =
+                label;
+
+    }
+
+
+
+    if (
+        $('#heroIndexValue')
+    ) {
+
+        $('#heroIndexValue')
+            .textContent =
+
+                fmt(
+                    indexValue
+                );
+
+    }
+
+
+
+    if (
+        $('#selectedPeriodLabel')
+    ) {
+
+        $('#selectedPeriodLabel')
+            .textContent =
+                label;
+
+    }
+
+
+
+    if (
+        $('#periodStatus')
+    ) {
+
+        $('#periodStatus')
+            .textContent =
+
+                `${D.length} filas salariales cargadas.`;
+
+    }
+
+
+
+    if (
+        $('#gridPeriodDescription')
+    ) {
+
+        $('#gridPeriodDescription')
+            .textContent =
+
+                `Período: ${label}`;
+
+    }
+
+
+
+    if (
+        $('#methodPeriod')
+    ) {
+
+        $('#methodPeriod')
+            .textContent =
+
+                `Período seleccionado: ${label}.`;
+
+    }
+
+
+
+    const familyPeriod =
+
+        RULES.familyAllowances
+            ?.period
+
+        ||
+
+        '—';
+
+
+
+    if (
+        $('#familyPeriodLabel')
+    ) {
+
+        $('#familyPeriodLabel')
+            .textContent =
+
+                `Período de asignaciones: ${familyPeriod}`;
+
+    }
+
+
+
+    renderDiscounts();
+
+    renderGuarantees();
+
+    renderSource();
+
+}
+
+
+
+/* ============================================================
+   RENDER GENERAL
+   ============================================================ */
+
+function render() {
+
+    renderItems();
+
+
+
+    $('#emptyState')
+        ?.classList
+        .toggle(
+
+            'hidden',
+
+            items.length > 0
+
+        );
+
+
+
+    $('#addArea')
+        ?.classList
+        .toggle(
+
+            'hidden',
+
+            items.length === 0
+
+        );
+
+
+
+    const totals =
+
+        calculateTotals();
+
+
+
+    const extras =
+
+        calculateFinalAccountTotal(
+            totals
+        );
+
+
+
+    renderTotals(
+        totals
+    );
+
+
+
+    renderPersonalSection(
+        totals,
+        extras
+    );
+
+
+
+    renderBankComparison(
+        totals,
+        extras
+    );
+
+
+
+    renderBars(
+
+        lastSelectedCargoCode
+
+            ?
+
+            getRowByCode(
+                lastSelectedCargoCode
+            )
+
+            :
+
+            null
+
+    );
+
+}
+
+
+
+/* ============================================================
+   CAMBIO DE PERÍODO
+   ============================================================ */
+
+function resetCalculatorForPeriodChange() {
+
+    items =
+        [];
+
+
+    seq =
+        0;
+
+
+    lastSelectedCargoCode =
+        null;
+
+
+    /*
+     * El monto bancario pertenece
+     * al período anterior.
+     */
+
+    if (
+        $('#bankAmount')
+    ) {
+
+        $('#bankAmount')
+            .value =
+                '';
+
+    }
+
+}
+
+
+
+/* ============================================================
+   LIMPIAR TODO
+   ============================================================ */
+
+function resetAll() {
+
+    items =
+        [];
+
+
+    seq =
+        0;
+
+
+    lastSelectedCargoCode =
+        null;
+
+
+
+    if (
+        $('#presentismEnabled')
+    ) {
+
+        $('#presentismEnabled')
+            .checked =
+
+                RULES.interface
+                    ?.presentismDefault
+
+                !==
+
+                false;
+
+    }
+
+
+
+    if (
+        $('#presentismLevel')
+    ) {
+
+        $('#presentismLevel')
+            .value =
+                '1';
+
+    }
+
+
+
+    if (
+        $('#ametAffiliate')
+    ) {
+
+        $('#ametAffiliate')
+            .checked =
+
+                Boolean(
+
+                    RULES.interface
+                        ?.unionDefault
+
+                );
+
+    }
+
+
+
+    if (
+        $('#familyIncome')
+    ) {
+
+        $('#familyIncome')
+            .value =
+                '';
+
+    }
+
+
+
+    if (
+        $('#childrenCount')
+    ) {
+
+        $('#childrenCount')
+            .value =
+                '0';
+
+    }
+
+
+
+    if (
+        $('#disabledChildrenCount')
+    ) {
+
+        $('#disabledChildrenCount')
+            .value =
+                '0';
+
+    }
+
+
+
+    if (
+        $('#spouseAllowance')
+    ) {
+
+        $('#spouseAllowance')
+            .checked =
+                false;
+
+    }
+
+
+
+    if (
+        $('#bankAmount')
+    ) {
+
+        $('#bankAmount')
+            .value =
+                '';
+
+    }
+
+
+
+    render();
+
+}
+
+
+
+/* ============================================================
+   DESCARGAR CSV
+   ============================================================ */
+
+function downloadCSV() {
+
+    if (
+        !currentPeriod
+    ) {
+
+        return;
+
+    }
+
+
+
+    const lines = [
+
+
+        [
+
+            'Período',
+
+            'Código',
+
+            'Cargo',
+
+            'Índice',
+
+            'Valor índice',
+
+            'Básico',
+
+            'Suma fija',
+
+            'Jerarquía',
+
+            'Sueldo c/ jerarquía',
+
+            ...A.map(
+                (age) =>
+                    `${age} años`
+            )
+
+        ],
+
+
+
+        ...D.map(
+            (row) => [
+
+                currentPeriod.label,
+
+                row.code,
+
+                row.name,
+
+                row.index,
+
+                row.indexValue,
+
+                row.basic,
+
+                row.fixed,
+
+                row.hierarchy,
+
+                row.pocket?.[0] || 0,
+
+                ...A.map(
+                    (age) =>
+
+                        pocketValue(
+                            row,
+                            age
+                        )
                 )
 
-            ];
+            ]
+        )
+
+    ];
 
 
-            const csv =
 
-                '\ufeff'
+    const csv =
 
-                +
+        '\ufeff'
 
-                lines
-                    .map(
-                        (row) =>
+        +
 
-                            row
-                                .map(
-                                    (value) =>
+        lines
 
-                                        `"${String(value).replaceAll(
-                                            '"',
-                                            '""'
-                                        )}"`
+            .map(
+                (row) =>
 
-                                )
+                    row
 
-                                .join(';')
+                        .map(
+                            (value) =>
 
-                    )
+                                `"${String(value).replaceAll(
+                                    '"',
+                                    '""'
+                                )}"`
 
-                    .join('\n');
+                        )
+
+                        .join(';')
+
+            )
+
+            .join('\n');
 
 
-            const link =
+
+    const blob =
+
+        new Blob(
+            [csv],
+            {
+                type:
+                    'text/csv;charset=utf-8'
+            }
+        );
+
+
+
+    const url =
+
+        URL.createObjectURL(
+            blob
+        );
+
+
+
+    const link =
+
+        document.createElement(
+            'a'
+        );
+
+
+
+    link.href =
+        url;
+
+
+
+    link.download =
+
+        `grilla-AMET-${currentPeriodId}.csv`;
+
+
+
+    document.body
+        .appendChild(
+            link
+        );
+
+
+
+    link.click();
+
+
+
+    link.remove();
+
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+
+/* ============================================================
+   SELECTOR DE PERÍODOS
+   ============================================================ */
+
+function populatePeriodSelect() {
+
+    const select =
+
+        $('#periodSelect');
+
+
+    if (!select) {
+        return;
+    }
+
+
+
+    if (
+        !PERIODS.length
+    ) {
+
+        select.innerHTML = `
+
+            <option value="">
+                No hay períodos configurados
+            </option>
+
+        `;
+
+
+        select.disabled =
+            true;
+
+
+        return;
+
+    }
+
+
+
+    select.innerHTML =
+
+        PERIODS
+
+            .map(
+                (period) => `
+
+                    <option value="${period.id}">
+                        ${period.label}
+                    </option>
+
+                `
+            )
+
+            .join('');
+
+
+
+    select.disabled =
+        false;
+
+}
+
+
+
+/* ============================================================
+   ESTADO DE CARGA
+   ============================================================ */
+
+function setLoadingState(
+    isLoading,
+    message = ''
+) {
+
+    const select =
+
+        $('#periodSelect');
+
+
+    const firstAdd =
+
+        $('#firstAdd');
+
+
+    const addItemButton =
+
+        $('#addItem');
+
+
+
+    if (select) {
+
+        select.disabled =
+            isLoading;
+
+    }
+
+
+
+    if (firstAdd) {
+
+        firstAdd.disabled =
+            isLoading;
+
+    }
+
+
+
+    if (addItemButton) {
+
+        addItemButton.disabled =
+            isLoading;
+
+    }
+
+
+
+    if (
+        $('#periodStatus')
+        &&
+        message
+    ) {
+
+        $('#periodStatus')
+            .textContent =
+                message;
+
+    }
+
+}
+
+
+
+/* ============================================================
+   CARGADOR DE ARCHIVOS MENSUALES
+   ============================================================ */
+
+function loadScript(
+    src,
+    periodId
+) {
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+
+            /*
+             * Ya está cargado.
+             */
+
+            if (
+                window.AMET_PERIOD_DATA
+                    ?.[periodId]
+            ) {
+
+                resolve();
+
+                return;
+
+            }
+
+
+
+            /*
+             * Script ya insertado.
+             */
+
+            const existing =
+
+                document.querySelector(
+                    `script[data-period-id="${periodId}"]`
+                );
+
+
+
+            if (
+                existing
+            ) {
+
+                existing.addEventListener(
+
+                    'load',
+
+                    () =>
+                        resolve(),
+
+                    {
+                        once:
+                            true
+                    }
+
+                );
+
+
+                existing.addEventListener(
+
+                    'error',
+
+                    () =>
+                        reject(
+
+                            new Error(
+                                `No se pudo cargar ${src}`
+                            )
+
+                        ),
+
+                    {
+                        once:
+                            true
+                    }
+
+                );
+
+
+                return;
+
+            }
+
+
+
+            /*
+             * Crear script dinámicamente.
+             */
+
+            const script =
+
                 document.createElement(
-                    'a'
+                    'script'
                 );
 
 
-            link.href =
-                URL.createObjectURL(
+            script.src =
+                src;
 
-                    new Blob(
-                        [csv],
-                        {
-                            type:
-                                'text/csv;charset=utf-8'
-                        }
-                    )
 
+            script.async =
+                true;
+
+
+            script.dataset.periodId =
+                periodId;
+
+
+
+            script.onload =
+
+                () =>
+                    resolve();
+
+
+
+            script.onerror =
+
+                () =>
+                    reject(
+
+                        new Error(
+                            `No se pudo cargar ${src}`
+                        )
+
+                    );
+
+
+
+            document.head
+                .appendChild(
+                    script
                 );
 
+        }
+    );
 
-            link.download =
-                'grilla-AMET-agosto-2026.csv';
-
-
-            link.click();
+}
 
 
-            URL.revokeObjectURL(
-                link.href
+
+/* ============================================================
+   CARGAR PERÍODO
+   ============================================================ */
+
+async function loadPeriod(
+    periodId
+) {
+
+    const descriptor =
+
+        getPeriodDescriptor(
+            periodId
+        );
+
+
+
+    if (
+        !descriptor
+    ) {
+
+        if (
+            $('#periodStatus')
+        ) {
+
+            $('#periodStatus')
+                .textContent =
+
+                    'Período no encontrado.';
+
+        }
+
+
+        return;
+
+    }
+
+
+
+    setLoadingState(
+
+        true,
+
+        `Cargando ${descriptor.label}...`
+
+    );
+
+
+
+    try {
+
+
+        /*
+         * Crear contenedor global
+         * si todavía no existe.
+         */
+
+        window.AMET_PERIOD_DATA =
+
+            window.AMET_PERIOD_DATA
+
+            ||
+
+            {};
+
+
+
+        /*
+         * Cargar archivo mensual.
+         */
+
+        await loadScript(
+
+            descriptor.file,
+
+            periodId
+
+        );
+
+
+
+        const periodData =
+
+            window.AMET_PERIOD_DATA
+                ?.[periodId];
+
+
+
+        if (
+            !periodData
+        ) {
+
+            throw new Error(
+
+                `El archivo ${descriptor.file} se cargó, pero no registró AMET_PERIOD_DATA["${periodId}"].`
+
             );
 
-        };
+        }
 
 
-// ============================================================
-// INICIO
-// ============================================================
 
-renderTable();
+        /*
+         * Activar período.
+         */
 
-render();
+        currentPeriodId =
+            periodId;
+
+
+        currentPeriod =
+            periodData;
+
+
+
+        D =
+
+            Array.isArray(
+                periodData.salaryData
+            )
+
+                ?
+
+                periodData.salaryData
+
+                :
+
+                [];
+
+
+
+        A =
+
+            Array.isArray(
+                periodData.ages
+            )
+
+                ?
+
+                periodData.ages
+
+                :
+
+                [];
+
+
+
+        /*
+         * Al cambiar de período
+         * borramos los cargos anteriores.
+         */
+
+        resetCalculatorForPeriodChange();
+
+
+
+        if (
+            $('#periodSelect')
+        ) {
+
+            $('#periodSelect')
+                .value =
+                    periodId;
+
+        }
+
+
+
+        if (
+            $('#search')
+        ) {
+
+            $('#search')
+                .value =
+                    '';
+
+        }
+
+
+
+        /*
+         * Actualizar pantalla.
+         */
+
+        renderPeriodMetadata();
+
+
+        renderTableHeader();
+
+
+        renderTable();
+
+
+        render();
+
+
+
+        setLoadingState(
+
+            false,
+
+            `${D.length} filas salariales cargadas.`
+
+        );
+
+    }
+
+
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            error
+        );
+
+
+        currentPeriod =
+            null;
+
+
+        D =
+            [];
+
+
+        A =
+            [];
+
+
+
+        if (
+            $('#periodStatus')
+        ) {
+
+            $('#periodStatus')
+                .textContent =
+
+                    `Error al cargar el período: ${error.message}`;
+
+        }
+
+
+
+        setLoadingState(
+            false
+        );
+
+    }
+
+}
+
+
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+
+function attachEvents() {
+
+
+    /* ========================================================
+       AGREGAR CARGO
+       ======================================================== */
+
+    $('#firstAdd')
+        ?.addEventListener(
+            'click',
+            addItem
+        );
+
+
+
+    $('#addItem')
+        ?.addEventListener(
+            'click',
+            addItem
+        );
+
+
+
+    /* ========================================================
+       LIMPIAR
+       ======================================================== */
+
+    $('#clearAll')
+        ?.addEventListener(
+            'click',
+            resetAll
+        );
+
+
+
+    /* ========================================================
+       CSV
+       ======================================================== */
+
+    $('#csv')
+        ?.addEventListener(
+            'click',
+            downloadCSV
+        );
+
+
+
+    /* ========================================================
+       CAMBIAR PERÍODO
+       ======================================================== */
+
+    $('#periodSelect')
+        ?.addEventListener(
+            'change',
+            (event) => {
+
+
+                const periodId =
+
+                    event.target.value;
+
+
+                if (
+                    periodId
+                ) {
+
+                    loadPeriod(
+                        periodId
+                    );
+
+                }
+
+            }
+        );
+
+
+
+    /* ========================================================
+       ELIMINAR CARGO
+       ======================================================== */
+
+    $('#items')
+        ?.addEventListener(
+            'click',
+            (event) => {
+
+
+                const button =
+
+                    event.target.closest(
+                        '[data-action="remove"]'
+                    );
+
+
+                if (
+                    !button
+                ) {
+
+                    return;
+
+                }
+
+
+                removeItem(
+
+                    Number(
+                        button.dataset.id
+                    )
+
+                );
+
+            }
+        );
+
+
+
+    /* ========================================================
+       CAMBIOS EN CARGOS
+       ======================================================== */
+
+    $('#items')
+        ?.addEventListener(
+            'change',
+            (event) => {
+
+
+                const target =
+
+                    event.target;
+
+
+                const action =
+
+                    target.dataset.action;
+
+
+                const id =
+
+                    Number(
+                        target.dataset.id
+                    );
+
+
+
+                if (
+                    !action
+                    ||
+                    !id
+                ) {
+
+                    return;
+
+                }
+
+
+
+                if (
+                    action ===
+                    'cargo'
+                ) {
+
+                    updateItem(
+
+                        id,
+
+                        'cargoCode',
+
+                        target.value
+
+                    );
+
+                }
+
+
+
+                if (
+                    action ===
+                    'age'
+                ) {
+
+                    updateItem(
+
+                        id,
+
+                        'age',
+
+                        target.value
+
+                    );
+
+                }
+
+
+
+                if (
+                    action ===
+                    'qty'
+                ) {
+
+                    updateItem(
+
+                        id,
+
+                        'qty',
+
+                        target.value
+
+                    );
+
+                }
+
+            }
+        );
+
+
+
+    /* ========================================================
+       DATOS PERSONALES
+       ======================================================== */
+
+    [
+
+        '#presentismEnabled',
+
+        '#presentismLevel',
+
+        '#ametAffiliate',
+
+        '#familyIncome',
+
+        '#childrenCount',
+
+        '#disabledChildrenCount',
+
+        '#spouseAllowance'
+
+    ]
+
+    .forEach(
+        (selector) => {
+
+
+            const element =
+
+                $(selector);
+
+
+            if (
+                !element
+            ) {
+
+                return;
+
+            }
+
+
+
+            element.addEventListener(
+                'input',
+                render
+            );
+
+
+            element.addEventListener(
+                'change',
+                render
+            );
+
+        }
+    );
+
+
+
+    /* ========================================================
+       CUENTA SUELDO
+       ======================================================== */
+
+    $('#bankAmount')
+        ?.addEventListener(
+            'input',
+            () => {
+
+
+                const totals =
+
+                    calculateTotals();
+
+
+                const extras =
+
+                    calculateFinalAccountTotal(
+                        totals
+                    );
+
+
+                updateBankDifference(
+                    extras.finalTotal
+                );
+
+            }
+        );
+
+
+
+    /* ========================================================
+       BUSCADOR
+       ======================================================== */
+
+    $('#search')
+        ?.addEventListener(
+            'input',
+            (event) => {
+
+
+                renderTable(
+                    event.target.value
+                );
+
+            }
+        );
+
+}
+
+
+
+/* ============================================================
+   INICIO
+   ============================================================ */
+
+async function init() {
+
+
+    /*
+     * Presentismo.
+     */
+
+    populatePresentismOptions();
+
+
+
+    /*
+     * Selector de períodos.
+     */
+
+    populatePeriodSelect();
+
+
+
+    /*
+     * Eventos.
+     */
+
+    attachEvents();
+
+
+
+    /*
+     * Descuentos generales.
+     */
+
+    renderDiscounts();
+
+
+
+    /*
+     * Período de asignaciones.
+     */
+
+    if (
+        $('#familyPeriodLabel')
+    ) {
+
+        $('#familyPeriodLabel')
+            .textContent =
+
+                `Período de asignaciones: ${RULES.familyAllowances?.period || '—'}`;
+
+    }
+
+
+
+    /*
+     * Comprobar que exista
+     * al menos una grilla.
+     */
+
+    if (
+        !PERIODS.length
+    ) {
+
+        if (
+            $('#periodStatus')
+        ) {
+
+            $('#periodStatus')
+                .textContent =
+
+                    'No hay períodos configurados en data/periods.js.';
+
+        }
+
+
+        return;
+
+    }
+
+
+
+    /*
+     * Elegir período inicial.
+     */
+
+    const initialPeriod =
+
+        getPeriodDescriptor(
+            DEFAULT_PERIOD
+        )
+
+            ?
+
+            DEFAULT_PERIOD
+
+            :
+
+            PERIODS[0].id;
+
+
+
+    /*
+     * Cargar período.
+     */
+
+    await loadPeriod(
+        initialPeriod
+    );
+
+}
+
+
+
+/* ============================================================
+   EJECUCIÓN
+   ============================================================ */
+
+if (
+    document.readyState ===
+    'loading'
+) {
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        init
+    );
+
+}
+
+else {
+
+    init();
+
+}
